@@ -6,6 +6,8 @@
   import SegmentedControl from '$lib/components/ui/SegmentedControl.svelte'
   import Badge from '$lib/components/ui/Badge.svelte'
   import type { TimeRange } from '$lib/types'
+  import RevenueChart from '$lib/components/dashboard/RevenueChart.svelte'
+  import PastWeekCard from '$lib/components/dashboard/PastWeekCard.svelte'
 
   let showBanner = $state(true)
   let showAppDropdown = $state(false)
@@ -135,14 +137,10 @@
       />
     </div>
 
-    <!-- Charts area placeholder — filled in Task 13 -->
+    <!-- Charts area -->
     <div class="mt-4 grid grid-cols-[1fr_220px] gap-4">
-      <div class="flex h-80 items-center justify-center rounded-lg bg-panel shadow-card">
-        <span class="text-sm text-gray-400">Revenue chart — next task</span>
-      </div>
-      <div class="flex h-80 items-center justify-center rounded-lg bg-panel shadow-card">
-        <span class="text-sm text-gray-400">Past 7 days — next task</span>
-      </div>
+      <RevenueChart data={dashboardStore.data.revenueChart} class="h-80" />
+      <PastWeekCard summary={dashboardStore.data.pastWeekSummary} />
     </div>
 
     <!-- Table placeholder — filled in Task 14 -->
