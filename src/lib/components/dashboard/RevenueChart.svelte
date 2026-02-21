@@ -32,7 +32,7 @@
       <Svg>
         <Axis placement="left" format={(d) => abbreviateNumber(d)} />
         <Axis placement="bottom" format={(d) => format(d, 'MMM d')} />
-        <Area line={{ class: 'stroke-coral stroke-2' }} class="fill-coral/20" />
+        <Area fill="#F87171" fillOpacity={0.2} line={{ stroke: '#F87171', strokeWidth: 2 }} />
         <Highlight points lines />
       </Svg>
       <Tooltip.Root let:data>
