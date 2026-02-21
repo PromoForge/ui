@@ -33,7 +33,7 @@
         <Axis placement="left" format={(d) => abbreviateNumber(d)} />
         <Axis placement="bottom" format={(d) => format(d, 'MMM d')} />
         <Area fill="#F87171" fillOpacity={0.2} tweened={{ duration: 800 }} />
-        <Spline stroke="#F87171" strokeWidth={2} fill="none" draw={{ duration: 800 }} />
+        <Spline stroke="#F87171" strokeWidth={2} fill="none" tweened={{ duration: 800 }} />
         <Highlight points lines />
       </Svg>
       <Tooltip.Root let:data>
