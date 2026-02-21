@@ -1,10 +1,14 @@
 <script lang="ts">
-	import '../app.css';
-	import AppShell from '$lib/components/layout/AppShell.svelte';
+  import '../app.css'
+  import AppShell from '$lib/components/layout/AppShell.svelte'
+  import ApplicationPanel from '$lib/components/layout/ApplicationPanel.svelte'
 
-	let { children } = $props();
+  let { children } = $props()
 </script>
 
 <AppShell>
-	{@render children()}
+  {#snippet sidebar()}
+    <ApplicationPanel />
+  {/snippet}
+  {@render children()}
 </AppShell>
