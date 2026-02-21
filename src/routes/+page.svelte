@@ -1,2 +1,4 @@
-<h1 class="text-3xl font-bold text-blue-600">PromoForge</h1>
-<p class="text-gray-500">Promotion engine</p>
+<div>
+	<h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+	<p class="mt-1 text-sm text-gray-500">Welcome to PromoForge.</p>
+</div>
