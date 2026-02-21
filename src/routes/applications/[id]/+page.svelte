@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import { page } from '$app/state'
   import { X, Info, ChevronDown, ExternalLink } from 'lucide-svelte'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { appDetailStore } from '$lib/stores/appDetailStore.svelte'
@@ -23,7 +23,7 @@
 
   // Sync store selection with route param and load data
   $effect(() => {
-    const appId = $page.params.id
+    const appId = page.params.id
     if (appId) {
       applicationStore.selectApplication(appId)
       appDetailStore.loadAppDetail(appId)
