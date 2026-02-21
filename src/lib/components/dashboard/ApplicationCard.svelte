@@ -7,16 +7,19 @@
   let {
     application,
     selected = false,
+    href,
     onclick
   }: {
     application: Application
     selected?: boolean
+    href?: string
     onclick?: () => void
   } = $props()
 </script>
 
-<button
-  class="group w-full cursor-pointer rounded-lg bg-panel p-4 text-left shadow-card transition-all hover:shadow-md {
+<a
+  {href}
+  class="group block w-full cursor-pointer rounded-lg bg-panel p-4 text-left shadow-card transition-all hover:shadow-md {
     selected ? 'border-l-2 border-primary bg-blue-50/50' : 'border-l-2 border-transparent'
   }"
   onclick={onclick}
@@ -51,4 +54,4 @@
     <StatusDot color="warning" count={application.disabledCount} label="disabled" />
     <StatusDot color="danger" count={application.expiredCount} label="expired" />
   </div>
-</button>
+</a>
