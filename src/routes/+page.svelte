@@ -44,7 +44,13 @@
     applicationStore.selectApplication(id)
     showAppDropdown = false
   }
+
+  function handleWindowClick() {
+    showAppDropdown = false
+  }
 </script>
+
+<svelte:window onclick={handleWindowClick} />
 
 <div class="p-6">
   <!-- Header -->
@@ -69,7 +75,7 @@
     <div class="relative mt-1">
       <button
         class="flex w-64 items-center justify-between rounded-lg border border-border bg-panel px-3 py-2 text-sm text-ink"
-        onclick={() => showAppDropdown = !showAppDropdown}
+        onclick={(e: MouseEvent) => { e.stopPropagation(); showAppDropdown = !showAppDropdown }}
       >
         <span class="flex items-center gap-2">
           {#if applicationStore.selectedApplication}
@@ -86,7 +92,13 @@
       </button>
 
       {#if showAppDropdown}
-        <div class="absolute z-10 mt-1 w-64 rounded-lg border border-border bg-panel py-1 shadow-card">
+        <div
+          class="absolute z-10 mt-1 w-64 rounded-lg border border-border bg-panel py-1 shadow-card"
+          role="menu"
+          tabindex="-1"
+          onclick={(e: MouseEvent) => e.stopPropagation()}
+          onkeydown={(e: KeyboardEvent) => { if (e.key === 'Escape') showAppDropdown = false }}
+        >
           {#each applicationStore.applications as app (app.id)}
             <button
               class="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 {
