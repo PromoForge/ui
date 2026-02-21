@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { page } from '$app/stores'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { getRecentCampaigns } from '$lib/services/campaignService'
   import type { Campaign } from '$lib/types'
@@ -9,6 +10,9 @@
   import CampaignCard from '$lib/components/dashboard/CampaignCard.svelte'
 
   let recentCampaigns = $state<Campaign[]>([])
+
+  // Derive selected app from route param when on detail page, else from store
+  const selectedAppId = $derived($page.params.id ?? applicationStore.selectedId)
 
   onMount(async () => {
     await applicationStore.loadApplications()
@@ -33,7 +37,8 @@
     {#each applicationStore.filteredApplications as app (app.id)}
       <ApplicationCard
         application={app}
-        selected={applicationStore.selectedId === app.id}
+        selected={selectedAppId === app.id}
+        href="/applications/{app.id}"
         onclick={() => applicationStore.selectApplication(app.id)}
       />
     {/each}
