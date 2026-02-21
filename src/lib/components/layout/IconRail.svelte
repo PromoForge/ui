@@ -22,7 +22,14 @@
     { label: 'Profile', icon: User, href: '#' }
   ]
 
-  let { activeHref = '/' }: { activeHref?: string } = $props()
+  let { currentPath = '/' }: { currentPath?: string } = $props()
+
+  function isItemActive(itemHref: string): boolean {
+    if (itemHref === '/') {
+      return currentPath === '/' || currentPath.startsWith('/applications')
+    }
+    return currentPath === itemHref || currentPath.startsWith(itemHref + '/')
+  }
 </script>
 
 <nav class="flex h-full w-14 flex-col items-center border-r border-border bg-panel py-4">
@@ -37,7 +44,7 @@
       <a
         href={item.href}
         class="group flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 transition-colors {
-          activeHref === item.href
+          isItemActive(item.href)
             ? 'text-primary'
             : 'text-gray-500 hover:text-gray-700'
         }"
@@ -57,7 +64,7 @@
       <a
         href={item.href}
         class="group flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 transition-colors {
-          activeHref === item.href
+          isItemActive(item.href)
             ? 'text-primary'
             : 'text-gray-500 hover:text-gray-700'
         }"

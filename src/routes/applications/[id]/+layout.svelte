@@ -22,7 +22,7 @@
 </script>
 
 <div class="grid h-screen grid-cols-[56px_220px_1fr]">
-  <IconRail activeHref="/" />
+  <IconRail {currentPath} />
 
   <aside class="overflow-y-auto border-r border-border bg-panel">
     <ApplicationContextPanel
