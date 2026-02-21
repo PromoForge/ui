@@ -8,6 +8,7 @@
   import type { TimeRange } from '$lib/types'
   import RevenueChart from '$lib/components/dashboard/RevenueChart.svelte'
   import PastWeekCard from '$lib/components/dashboard/PastWeekCard.svelte'
+  import RevenueSummaryTable from '$lib/components/dashboard/RevenueSummaryTable.svelte'
 
   let showBanner = $state(true)
   let showAppDropdown = $state(false)
@@ -143,9 +144,7 @@
       <PastWeekCard summary={dashboardStore.data.pastWeekSummary} />
     </div>
 
-    <!-- Table placeholder — filled in Task 14 -->
-    <div class="mt-4 flex h-48 items-center justify-center rounded-lg bg-panel shadow-card">
-      <span class="text-sm text-gray-400">Revenue summary table — next task</span>
-    </div>
+    <!-- Revenue Summary Table -->
+    <RevenueSummaryTable rows={dashboardStore.data.revenueSummary} class="mt-4" />
   {/if}
 </div>
