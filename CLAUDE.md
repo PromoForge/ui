@@ -4,10 +4,10 @@ Promotion engine frontend built with SvelteKit 2, Svelte 5, Tailwind CSS v4, and
 
 ## Commands
 
-- `npm run dev` — Start dev server (port 5173)
-- `npm run build` — Production build
-- `npm run preview` — Preview production build
-- `npm run check` — Run svelte-check for type errors
+- `bun run dev` — Start dev server (port 5173)
+- `bun run build` — Production build
+- `bun run preview` — Preview production build
+- `bun run check` — Run svelte-check for type errors
 
 ## Project Structure
 
@@ -65,4 +65,4 @@ src/
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin, no config file)
 - **Language:** TypeScript
 - **Build:** Vite, `@sveltejs/adapter-static` (SPA mode with `index.html` fallback)
-- **Package manager:** npm
+- **Package manager:** bun
