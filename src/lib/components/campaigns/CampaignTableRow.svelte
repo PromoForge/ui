@@ -29,8 +29,13 @@
 </script>
 
 <tr class="border-b border-border hover:bg-gray-50/50">
-  <td class="whitespace-nowrap px-3 py-3 text-sm font-medium text-ink">
-    {campaign.name}
+  <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
+    <a
+      href="/applications/{campaign.applicationId}/campaigns/{campaign.id}/dashboard"
+      class="text-ink hover:text-primary hover:underline"
+    >
+      {campaign.name}
+    </a>
   </td>
   <td class="whitespace-nowrap px-3 py-3 text-center">
     <span class="inline-flex h-6 w-6 items-center justify-center rounded bg-gray-100 text-xs font-semibold text-gray-600">
