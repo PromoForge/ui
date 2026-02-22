@@ -33,3 +33,35 @@ export interface CampaignListItem {
   archived: boolean
   lowOnBudget: boolean
 }
+
+// --- Campaign Detail Page types ---
+
+export interface CampaignRule {
+  name: string
+  conditions: number
+  effects: number
+}
+
+export interface CampaignBudget {
+  label: string
+  type: string
+  current: number
+  limit: number
+  recurrence: string | null
+}
+
+export interface CampaignDetail {
+  id: string
+  applicationId: string
+  name: string
+  status: CampaignStatus
+  description: string
+  category: string
+  productList: string
+  tags: string[]
+  rules: CampaignRule[]
+  budgets: CampaignBudget[]
+  schedule: { startDate: string | null; endDate: string | null }
+  lastUpdatedAt: string
+  lastUpdatedBy: string
+}
