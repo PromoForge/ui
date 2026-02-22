@@ -1,0 +1,148 @@
+import type { CampaignDetail } from '$lib/types'
+
+export const mockCampaignDetails: CampaignDetail[] = [
+  {
+    id: 'cl-006',
+    applicationId: 'app-1',
+    name: 'New User Welcome Voucher',
+    status: 'running',
+    description: 'SAR 30 off first purchase for new users. Minimum order value SAR 100.',
+    category: 'Acquisition',
+    productList: 'All products',
+    tags: ['new-user', 'welcome', 'voucher'],
+    rules: [
+      { name: 'Coupon Valid >150', conditions: 7, effects: 1 },
+      { name: 'Coupon Valid <150', conditions: 7, effects: 1 },
+      { name: 'Order Placed > 150', conditions: 6, effects: 1 },
+      { name: 'Order Placed < 150', conditions: 6, effects: 1 }
+    ],
+    budgets: [
+      { label: 'Set Discount', type: 'no recurrence', current: 0, limit: 10000, recurrence: null },
+      {
+        label: 'Redeem Coupon',
+        type: 'no recurrence',
+        current: 0,
+        limit: 1000000,
+        recurrence: null
+      }
+    ],
+    schedule: { startDate: '2026-01-01T00:00:00Z', endDate: '2026-06-30T23:59:59Z' },
+    lastUpdatedAt: '2026-02-22T11:45:00Z',
+    lastUpdatedBy: 'Sara Al Harbi'
+  },
+  {
+    id: 'cl-008',
+    applicationId: 'app-1',
+    name: 'Free Shipping Over SAR 200',
+    status: 'running',
+    description: '15% off up to 15 – MOV=150',
+    category: 'Beauty',
+    productList: '1month – list of products',
+    tags: [],
+    rules: [
+      { name: 'Coupon Valid >150', conditions: 7, effects: 1 },
+      { name: 'Coupon Valid <150', conditions: 7, effects: 1 },
+      { name: 'Order Placed > 150', conditions: 6, effects: 1 },
+      { name: 'Order Placed < 150', conditions: 6, effects: 1 }
+    ],
+    budgets: [
+      { label: 'Set Discount', type: 'no recurrence', current: 0, limit: 10000, recurrence: null },
+      {
+        label: 'Redeem Coupon',
+        type: 'no recurrence',
+        current: 0,
+        limit: 1000000,
+        recurrence: null
+      }
+    ],
+    schedule: { startDate: null, endDate: null },
+    lastUpdatedAt: '2026-01-04T12:56:00Z',
+    lastUpdatedBy: 'Fatima Al Enezi'
+  },
+  {
+    id: 'cl-009',
+    applicationId: 'app-1',
+    name: 'Buy 2 Get 1 Free Electronics',
+    status: 'running',
+    description: 'Buy any 2 electronics items and get the cheapest one free.',
+    category: 'Electronics',
+    productList: 'Electronics category',
+    tags: ['bogo', 'electronics'],
+    rules: [
+      { name: 'Cart Contains 2+ Electronics', conditions: 3, effects: 1 },
+      { name: 'Apply Free Item Discount', conditions: 2, effects: 1 }
+    ],
+    budgets: [
+      {
+        label: 'Set Discount',
+        type: 'per session',
+        current: 567,
+        limit: 5000,
+        recurrence: 'per session'
+      }
+    ],
+    schedule: { startDate: '2026-02-10T00:00:00Z', endDate: '2026-02-25T23:59:59Z' },
+    lastUpdatedAt: '2026-02-21T17:00:00Z',
+    lastUpdatedBy: 'Ahmed Mansour'
+  },
+  {
+    id: 'cl-017',
+    applicationId: 'app-1',
+    name: 'First Purchase 20% Off',
+    status: 'running',
+    description: '20% discount on first order. Maximum discount SAR 100.',
+    category: 'Acquisition',
+    productList: 'All products',
+    tags: ['first-purchase', 'acquisition'],
+    rules: [
+      { name: 'Is First Purchase', conditions: 4, effects: 1 },
+      { name: 'Apply 20% Discount', conditions: 2, effects: 1 },
+      { name: 'Cap at SAR 100', conditions: 1, effects: 1 }
+    ],
+    budgets: [
+      {
+        label: 'Set Discount',
+        type: 'no recurrence',
+        current: 12340,
+        limit: 50000,
+        recurrence: null
+      },
+      {
+        label: 'Redeem Coupon',
+        type: 'monthly',
+        current: 987,
+        limit: 5000,
+        recurrence: 'monthly'
+      }
+    ],
+    schedule: { startDate: '2025-06-01T00:00:00Z', endDate: '2026-05-31T23:59:59Z' },
+    lastUpdatedAt: '2026-02-22T13:00:00Z',
+    lastUpdatedBy: 'Khalid Ibrahim'
+  },
+  {
+    id: 'cl-021',
+    applicationId: 'app-1',
+    name: 'National Day Sale 2025',
+    status: 'expired',
+    description: 'Up to 50% off all categories for National Day celebration.',
+    category: 'Seasonal',
+    productList: 'All products',
+    tags: ['national-day', 'seasonal', '2025'],
+    rules: [
+      { name: 'Apply Category Discount', conditions: 5, effects: 3 },
+      { name: 'VIP Extra 10%', conditions: 3, effects: 1 }
+    ],
+    budgets: [
+      {
+        label: 'Set Discount',
+        type: 'no recurrence',
+        current: 15600,
+        limit: 20000,
+        recurrence: null
+      }
+    ],
+    schedule: { startDate: '2025-09-20T00:00:00Z', endDate: '2025-09-25T23:59:59Z' },
+    lastUpdatedAt: '2025-09-25T23:59:59Z',
+    lastUpdatedBy: 'Abdulrahman Al Mutairi'
+  }
+]
