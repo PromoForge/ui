@@ -1,11 +1,3 @@
-export type Environment = 'live' | 'sandbox'
+import type { Application } from '$lib/api/generated/types.gen'
 
-export interface Application {
-  id: string
-  name: string
-  environment: Environment
-  campaignCount: number
-  runningCount: number
-  disabledCount: number
-  expiredCount: number
-}
+export type Environment = NonNullable<Application['environment']>

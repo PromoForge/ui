@@ -1,5 +1,5 @@
 import { getApplications } from '$lib/services/applicationService'
-import type { Application } from '$lib/types'
+import type { Application } from '$lib/api/generated/types.gen'
 
 function createApplicationStore() {
   let applications = $state<Application[]>([])
@@ -8,13 +8,13 @@ function createApplicationStore() {
   let loading = $state(false)
 
   const selectedApplication = $derived(
-    applications.find((a) => a.id === selectedId) ?? null
+    applications.find((a) => String(a.id) === selectedId) ?? null
   )
 
   const filteredApplications = $derived(
     searchQuery
       ? applications.filter((a) =>
-          a.name.toLowerCase().includes(searchQuery.toLowerCase())
+          (a.name ?? '').toLowerCase().includes(searchQuery.toLowerCase())
         )
       : applications
   )
@@ -24,7 +24,7 @@ function createApplicationStore() {
     try {
       applications = await getApplications()
       if (applications.length > 0 && !selectedId) {
-        selectedId = applications[0].id
+        selectedId = String(applications[0].id)
       }
     } finally {
       loading = false

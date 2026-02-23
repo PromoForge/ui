@@ -86,8 +86,8 @@
         <span class="flex items-center gap-2">
           {#if applicationStore.selectedApplication}
             <Badge
-              variant={applicationStore.selectedApplication.environment === 'live' ? 'live' : 'sandbox'}
-              label={applicationStore.selectedApplication.environment === 'live' ? 'LIVE' : 'SB'}
+              variant={applicationStore.selectedApplication.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
+              label={applicationStore.selectedApplication.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}
             />
             {applicationStore.selectedApplication.name}
           {:else}
@@ -108,13 +108,13 @@
           {#each applicationStore.applications as app (app.id)}
             <button
               class="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 {
-                appId === app.id ? 'bg-blue-50 text-primary' : 'text-ink'
+                appId === String(app.id) ? 'bg-blue-50 text-primary' : 'text-ink'
               }"
-              onclick={() => selectAppFromDropdown(app.id)}
+              onclick={() => selectAppFromDropdown(String(app.id))}
             >
               <Badge
-                variant={app.environment === 'live' ? 'live' : 'sandbox'}
-                label={app.environment === 'live' ? 'LIVE' : 'SB'}
+                variant={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
+                label={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}
               />
               {app.name}
             </button>

@@ -32,7 +32,7 @@
       <CampaignContextPanel
         applicationId={appId}
         applicationName={applicationStore.selectedApplication?.name ?? ''}
-        environment={applicationStore.selectedApplication?.environment ?? 'live'}
+        environment={applicationStore.selectedApplication?.environment ?? 'APPLICATION_ENVIRONMENT_SANDBOX'}
         {campaignId}
         {currentPath}
       />
@@ -40,7 +40,7 @@
       <ApplicationContextPanel
         applicationId={appId}
         applicationName={applicationStore.selectedApplication?.name ?? ''}
-        environment={applicationStore.selectedApplication?.environment ?? 'live'}
+        environment={applicationStore.selectedApplication?.environment ?? 'APPLICATION_ENVIRONMENT_SANDBOX'}
         {currentPath}
       />
     {/if}

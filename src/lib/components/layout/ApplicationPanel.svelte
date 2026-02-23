@@ -37,9 +37,9 @@
     {#each applicationStore.filteredApplications as app (app.id)}
       <ApplicationCard
         application={app}
-        selected={selectedAppId === app.id}
+        selected={selectedAppId === String(app.id)}
         href="/applications/{app.id}"
-        onclick={() => applicationStore.selectApplication(app.id)}
+        onclick={() => applicationStore.selectApplication(String(app.id))}
       />
     {/each}
   </div>

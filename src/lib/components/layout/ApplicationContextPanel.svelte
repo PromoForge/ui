@@ -82,8 +82,8 @@
           <div class="font-semibold text-ink">{applicationName}</div>
           <div class="mt-0.5">
             <Badge
-              variant={environment === 'live' ? 'live' : 'sandbox'}
-              label={environment === 'live' ? 'LIVE' : 'SANDBOX'}
+              variant={environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
+              label={environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SANDBOX'}
             />
           </div>
         </div>
@@ -101,13 +101,13 @@
           {#each applicationStore.applications as app (app.id)}
             <button
               class="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 {
-                applicationId === app.id ? 'bg-blue-50 text-primary' : 'text-ink'
+                applicationId === String(app.id) ? 'bg-blue-50 text-primary' : 'text-ink'
               }"
-              onclick={() => selectApp(app.id)}
+              onclick={() => selectApp(String(app.id))}
             >
               <Badge
-                variant={app.environment === 'live' ? 'live' : 'sandbox'}
-                label={app.environment === 'live' ? 'LIVE' : 'SB'}
+                variant={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
+                label={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}
               />
               {app.name}
             </button>
