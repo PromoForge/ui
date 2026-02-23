@@ -2,7 +2,7 @@
   import { Info } from 'lucide-svelte'
   import type { RevenueSummaryRow } from '$lib/types'
   import { formatCurrency, formatPercent } from '$lib/utils'
-  import Tooltip from '$lib/components/ui/Tooltip.svelte'
+  import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 
   let { rows, class: className = '' }: {
     rows: RevenueSummaryRow[]
@@ -63,9 +63,14 @@
               {/if}
               <span class="text-sm font-medium text-ink">{row.label}</span>
               {#if rowMeta[row.label]?.tooltip}
-                <Tooltip text={rowMeta[row.label].tooltip}>
-                  <Info size={14} class="text-gray-400" />
-                </Tooltip>
+                <Tooltip.Root>
+                  <Tooltip.Trigger>
+                    <Info size={14} class="text-gray-400" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    <p>{rowMeta[row.label].tooltip}</p>
+                  </Tooltip.Content>
+                </Tooltip.Root>
               {/if}
             </div>
           </td>

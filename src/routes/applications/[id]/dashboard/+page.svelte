@@ -2,9 +2,10 @@
   import { page } from '$app/state'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { appDetailStore } from '$lib/stores/appDetailStore.svelte'
-  import SegmentedControl from '$lib/components/ui/SegmentedControl.svelte'
-  import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
-  import InfoBanner from '$lib/components/ui/InfoBanner.svelte'
+  import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js'
+  import Breadcrumb from '$lib/components/ui/app-breadcrumb.svelte'
+  import * as Alert from '$lib/components/ui/alert/index.js'
+  import { Info } from 'lucide-svelte'
   import PageActions from '$lib/components/ui/PageActions.svelte'
   import MetricCard from '$lib/components/dashboard/MetricCard.svelte'
   import CampaignFilterBar from '$lib/components/dashboard/CampaignFilterBar.svelte'
@@ -49,10 +50,10 @@
   </div>
 
   <!-- Info Banner -->
-  <InfoBanner
-    message="Dashboard updated daily at 11:59pm UTC. Data collected since 12/06/2021."
-    class="mt-4"
-  />
+  <Alert.Root class="mt-4">
+    <Info class="size-4" />
+    <Alert.Description>Dashboard updated daily at 11:59pm UTC. Data collected since 12/06/2021.</Alert.Description>
+  </Alert.Root>
 
   {#if appDetailStore.data}
     <!-- Campaign filters + Time range row -->
@@ -63,11 +64,19 @@
         ontoggle={(status) => appDetailStore.toggleFilter(status)}
         onclear={() => appDetailStore.clearFilters()}
       />
-      <SegmentedControl
-        options={timeRangeOptions}
-        selected={appDetailStore.timeRange}
-        onchange={handleTimeRangeChange}
-      />
+      <ToggleGroup.Root
+        type="single"
+        variant="outline"
+        size="sm"
+        value={appDetailStore.timeRange}
+        onValueChange={handleTimeRangeChange}
+      >
+        {#each timeRangeOptions as option (option.value)}
+          <ToggleGroup.Item value={option.value} aria-label={option.label}>
+            {option.label}
+          </ToggleGroup.Item>
+        {/each}
+      </ToggleGroup.Root>
     </div>
 
     <!-- Metric cards grid (3x2) -->

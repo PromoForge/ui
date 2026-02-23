@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Info } from 'lucide-svelte'
-  import Tooltip from './Tooltip.svelte'
+  import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 
   let { label, value, tooltip = '', class: className = '' }: {
     label: string
@@ -14,9 +14,14 @@
   <div class="flex items-center gap-1.5 text-xs text-gray-500">
     <span>{label}</span>
     {#if tooltip}
-      <Tooltip text={tooltip}>
-        <Info size={14} class="text-gray-400" />
-      </Tooltip>
+      <Tooltip.Root>
+        <Tooltip.Trigger>
+          <Info size={14} class="text-gray-400" />
+        </Tooltip.Trigger>
+        <Tooltip.Content>
+          <p>{tooltip}</p>
+        </Tooltip.Content>
+      </Tooltip.Root>
     {/if}
   </div>
   <div class="mt-2 font-mono text-3xl font-semibold text-ink">

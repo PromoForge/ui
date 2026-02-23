@@ -2,7 +2,7 @@
   import { page } from '$app/state'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { campaignDetailStore } from '$lib/stores/campaignDetailStore.svelte'
-  import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
+  import Breadcrumb from '$lib/components/ui/app-breadcrumb.svelte'
   import CampaignActivationBanner from '$lib/components/campaigns/CampaignActivationBanner.svelte'
   import CampaignDetailsCard from '$lib/components/campaigns/CampaignDetailsCard.svelte'
   import CampaignStateCard from '$lib/components/campaigns/CampaignStateCard.svelte'

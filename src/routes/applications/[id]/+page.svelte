@@ -1,14 +1,14 @@
 <script lang="ts">
   import { page } from '$app/state'
   import { goto } from '$app/navigation'
-  import { ChevronDown } from 'lucide-svelte'
+  import { ChevronDown, Info } from 'lucide-svelte'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { dashboardStore } from '$lib/stores/dashboardStore.svelte'
   import StatCard from '$lib/components/ui/StatCard.svelte'
-  import SegmentedControl from '$lib/components/ui/SegmentedControl.svelte'
+  import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js'
   import { Badge } from '$lib/components/ui/badge/index.js'
-  import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
-  import InfoBanner from '$lib/components/ui/InfoBanner.svelte'
+  import Breadcrumb from '$lib/components/ui/app-breadcrumb.svelte'
+  import * as Alert from '$lib/components/ui/alert/index.js'
   import PageActions from '$lib/components/ui/PageActions.svelte'
   import RevenueChart from '$lib/components/dashboard/RevenueChart.svelte'
   import PastWeekCard from '$lib/components/dashboard/PastWeekCard.svelte'
@@ -70,10 +70,10 @@
   </div>
 
   <!-- Info Banner -->
-  <InfoBanner
-    message="Dashboard updated daily at 11:59pm UTC. Data collected since 12/06/2021."
-    class="mt-4"
-  />
+  <Alert.Root class="mt-4">
+    <Info class="size-4" />
+    <Alert.Description>Dashboard updated daily at 11:59pm UTC. Data collected since 12/06/2021.</Alert.Description>
+  </Alert.Root>
 
   <!-- Application Selector (secondary) -->
   <div class="mt-6">
@@ -147,11 +147,19 @@
 
     <!-- Time Range Selector -->
     <div class="mt-6 flex justify-end">
-      <SegmentedControl
-        options={timeRangeOptions}
-        selected={dashboardStore.timeRange}
-        onchange={handleTimeRangeChange}
-      />
+      <ToggleGroup.Root
+        type="single"
+        variant="outline"
+        size="sm"
+        value={dashboardStore.timeRange}
+        onValueChange={handleTimeRangeChange}
+      >
+        {#each timeRangeOptions as option (option.value)}
+          <ToggleGroup.Item value={option.value} aria-label={option.label}>
+            {option.label}
+          </ToggleGroup.Item>
+        {/each}
+      </ToggleGroup.Root>
     </div>
 
     <!-- Charts area -->
