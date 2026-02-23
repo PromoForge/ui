@@ -26,7 +26,7 @@ src/
 │   │   ├── generated/       # Generated hey-api SDK (do not edit)
 │   │   └── client.ts        # Client config — sets base URL from PUBLIC_API_URL
 │   ├── components/
-│   │   ├── ui/              # Reusable UI primitives (Button, Card, Input, Modal, etc.)
+│   │   ├── ui/              # shadcn-svelte components + custom primitives
 │   │   └── layout/          # App shell components (Sidebar, Header, AppShell)
 │   ├── stores/              # Svelte 5 rune-based state (use .svelte.ts extension)
 │   ├── services/            # API/backend service layer
@@ -62,11 +62,6 @@ Typed API client is auto-generated from the PromoForge OpenAPI v3 spec using `@h
 1. Create `src/routes/<page-name>/+page.svelte`
 2. Add nav entry in `src/lib/components/layout/Sidebar.svelte` navItems array
 
-### Adding a new UI component
-1. Create `src/lib/components/ui/<ComponentName>.svelte`
-2. Use Svelte 5 runes: `$props()`, `$state()`, `$derived()`
-3. Accept Tailwind `class` prop via `let { class: className = '' } = $props()`
-
 ### Adding a new service
 1. Create `src/lib/services/<name>.ts`
 2. Export async functions that return typed data
@@ -83,9 +78,29 @@ Typed API client is auto-generated from the PromoForge OpenAPI v3 spec using `@h
 4. Route guards: Add `load` function in `src/routes/+layout.ts` to check auth state
 5. Login page: `src/routes/login/+page.svelte`
 
+## UI Components (shadcn-svelte)
+
+UI primitives are provided by **shadcn-svelte** (built on **Bits UI**). Components live in `src/lib/components/ui/` and are owned by the project (not a node_modules dependency).
+
+- **Add a component:** `bunx shadcn-svelte@latest add <component-name>`
+- **Available components:** https://shadcn-svelte.com/docs/components
+- **Theming:** CSS variables in `app.css` using shadcn's convention (`--background`, `--foreground`, `--primary`, etc.)
+- **Animations:** Provided by `tw-animate-css`
+
+### Adding a new UI component
+1. First check if shadcn-svelte has it: `bunx shadcn-svelte@latest add <name>`
+2. If not available in shadcn, create `src/lib/components/ui/<ComponentName>.svelte` and build on top of shadcn primitives (Button, Card, etc.)
+3. Use Svelte 5 runes: `$props()`, `$state()`, `$derived()`
+
+### Custom extensions (not from shadcn)
+App-specific components that build on shadcn primitives:
+- `PageActions` — common page header actions
+- `StatCard` — KPI display card (uses shadcn Card + Tooltip)
+
 ## Tech Stack
 - **Framework:** SvelteKit 2 with Svelte 5
 - **Styling:** Tailwind CSS v4 (via `@tailwindcss/vite` plugin, no config file)
+- **UI Components:** shadcn-svelte (Bits UI)
 - **Language:** TypeScript
 - **Build:** Vite, `@sveltejs/adapter-static` (SPA mode with `index.html` fallback)
 - **Package manager:** bun
