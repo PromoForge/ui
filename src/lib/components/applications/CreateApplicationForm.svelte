@@ -8,6 +8,7 @@
   import { Input } from '$lib/components/ui/input/index.js'
   import { Textarea } from '$lib/components/ui/textarea/index.js'
   import { Button } from '$lib/components/ui/button/index.js'
+  import { FlaskConical, Rocket } from 'lucide-svelte'
 
   let {
     open = $bindable(false)
@@ -61,9 +62,11 @@
   ]
 
   const environmentOptions = [
-    { value: 'APPLICATION_ENVIRONMENT_SANDBOX', label: 'Sandbox' },
-    { value: 'APPLICATION_ENVIRONMENT_LIVE', label: 'Live' }
+    { value: 'APPLICATION_ENVIRONMENT_SANDBOX', label: 'Sandbox', icon: FlaskConical, color: 'text-sandbox' },
+    { value: 'APPLICATION_ENVIRONMENT_LIVE', label: 'Live', icon: Rocket, color: 'text-success' }
   ]
+
+  const selectedEnv = $derived(environmentOptions.find(o => o.value === environment))
 
   function resetForm() {
     name = ''
@@ -173,11 +176,23 @@
           <Label class="text-sm font-medium">Application environment</Label>
           <Select.Root type="single" bind:value={environment}>
             <Select.Trigger class="w-full">
-              {environmentOptions.find(o => o.value === environment)?.label ?? 'Select...'}
+              {#if selectedEnv}
+                <span class="flex items-center gap-2">
+                  <selectedEnv.icon size={16} class={selectedEnv.color} />
+                  {selectedEnv.label}
+                </span>
+              {:else}
+                Select...
+              {/if}
             </Select.Trigger>
             <Select.Content>
               {#each environmentOptions as option (option.value)}
-                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+                <Select.Item value={option.value} label={option.label}>
+                  <span class="flex items-center gap-2">
+                    <option.icon size={16} class={option.color} />
+                    {option.label}
+                  </span>
+                </Select.Item>
               {/each}
             </Select.Content>
           </Select.Root>
