@@ -17,7 +17,7 @@
     Plus
   } from 'lucide-svelte'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
-  import Badge from '$lib/components/ui/Badge.svelte'
+  import { Badge } from '$lib/components/ui/badge/index.js'
   import type { Environment } from '$lib/types'
 
   let {
@@ -83,8 +83,7 @@
           <div class="mt-0.5">
             <Badge
               variant={environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
-              label={environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SANDBOX'}
-            />
+            >{environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SANDBOX'}</Badge>
           </div>
         </div>
         <ChevronDown size={16} class="text-gray-400" />
@@ -107,8 +106,7 @@
             >
               <Badge
                 variant={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
-                label={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}
-              />
+              >{app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}</Badge>
               {app.name}
             </button>
           {/each}

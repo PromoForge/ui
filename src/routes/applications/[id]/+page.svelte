@@ -6,7 +6,7 @@
   import { dashboardStore } from '$lib/stores/dashboardStore.svelte'
   import StatCard from '$lib/components/ui/StatCard.svelte'
   import SegmentedControl from '$lib/components/ui/SegmentedControl.svelte'
-  import Badge from '$lib/components/ui/Badge.svelte'
+  import { Badge } from '$lib/components/ui/badge/index.js'
   import Breadcrumb from '$lib/components/ui/Breadcrumb.svelte'
   import InfoBanner from '$lib/components/ui/InfoBanner.svelte'
   import PageActions from '$lib/components/ui/PageActions.svelte'
@@ -87,8 +87,7 @@
           {#if applicationStore.selectedApplication}
             <Badge
               variant={applicationStore.selectedApplication.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
-              label={applicationStore.selectedApplication.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}
-            />
+            >{applicationStore.selectedApplication.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}</Badge>
             {applicationStore.selectedApplication.name}
           {:else}
             Select application
@@ -114,8 +113,7 @@
             >
               <Badge
                 variant={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
-                label={app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}
-              />
+              >{app.environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'LIVE' : 'SB'}</Badge>
               {app.name}
             </button>
           {/each}

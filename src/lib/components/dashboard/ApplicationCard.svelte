@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Application } from '$lib/api/generated/types.gen'
-  import Badge from '$lib/components/ui/Badge.svelte'
+  import { Badge } from '$lib/components/ui/badge/index.js'
 
   let {
     application,
@@ -26,7 +26,7 @@
 >
   <!-- Top row: badge -->
   <div class="flex items-start justify-between">
-    <Badge variant={isLive ? 'live' : 'sandbox'} label={isLive ? 'LIVE' : 'SANDBOX'} />
+    <Badge variant={isLive ? 'live' : 'sandbox'}>{isLive ? 'LIVE' : 'SANDBOX'}</Badge>
   </div>
 
   <!-- App name -->

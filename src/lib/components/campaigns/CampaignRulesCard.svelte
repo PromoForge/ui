@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Card from '$lib/components/ui/Card.svelte'
+  import * as Card from '$lib/components/ui/card/index.js'
   import type { CampaignRule } from '$lib/types'
 
   let {
@@ -11,7 +11,8 @@
   } = $props()
 </script>
 
-<Card class={className}>
+<Card.Root class={className}>
+  <Card.Content>
   <h3 class="text-sm font-semibold text-ink">Rules</h3>
 
   {#if rules.length > 0}
@@ -32,4 +33,5 @@
   {/if}
 
   <button class="mt-4 text-sm text-primary hover:underline">Go to the Rule Builder</button>
-</Card>
+  </Card.Content>
+</Card.Root>

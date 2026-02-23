@@ -1,6 +1,6 @@
 <script lang="ts">
   import { MoreVertical } from 'lucide-svelte'
-  import Card from '$lib/components/ui/Card.svelte'
+  import * as Card from '$lib/components/ui/card/index.js'
   import { Button } from '$lib/components/ui/button/index.js'
   import type { CampaignStatus } from '$lib/types'
 
@@ -38,7 +38,8 @@
   const config = $derived(statusConfig[status])
 </script>
 
-<Card class={className}>
+<Card.Root class={className}>
+  <Card.Content>
   <h3 class="text-sm font-semibold text-ink">State</h3>
 
   <div class="mt-3 flex items-center gap-2">
@@ -54,4 +55,5 @@
       <MoreVertical size={16} />
     </button>
   </div>
-</Card>
+  </Card.Content>
+</Card.Root>

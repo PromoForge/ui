@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Settings } from 'lucide-svelte'
-  import Card from '$lib/components/ui/Card.svelte'
+  import * as Card from '$lib/components/ui/card/index.js'
   import type { CampaignDetail } from '$lib/types'
 
   let {
@@ -23,7 +23,8 @@
   )
 </script>
 
-<Card class={className}>
+<Card.Root class={className}>
+  <Card.Content>
   <div class="flex items-center justify-between">
     <h3 class="text-sm font-semibold text-ink">Details</h3>
     <button class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
@@ -64,4 +65,5 @@
   <p class="mt-4 text-xs text-gray-400">
     Last updated on {lastUpdatedDate} by {campaign.lastUpdatedBy}
   </p>
-</Card>
+  </Card.Content>
+</Card.Root>

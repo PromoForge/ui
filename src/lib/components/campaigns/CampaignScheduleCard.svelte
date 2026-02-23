@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Card from '$lib/components/ui/Card.svelte'
+  import * as Card from '$lib/components/ui/card/index.js'
   import { formatDate } from '$lib/utils'
 
   let {
@@ -13,7 +13,8 @@
   const hasSchedule = $derived(schedule.startDate !== null || schedule.endDate !== null)
 </script>
 
-<Card class={className}>
+<Card.Root class={className}>
+  <Card.Content>
   <h3 class="text-sm font-semibold text-ink">Schedule</h3>
 
   {#if hasSchedule}
@@ -31,4 +32,5 @@
   {/if}
 
   <button class="mt-3 text-sm text-primary hover:underline">Go to Schedule</button>
-</Card>
+  </Card.Content>
+</Card.Root>
