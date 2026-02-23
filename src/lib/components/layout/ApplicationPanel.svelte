@@ -8,8 +8,10 @@
   import Button from '$lib/components/ui/Button.svelte'
   import ApplicationCard from '$lib/components/dashboard/ApplicationCard.svelte'
   import CampaignCard from '$lib/components/dashboard/CampaignCard.svelte'
+  import CreateApplicationForm from '$lib/components/applications/CreateApplicationForm.svelte'
 
   let recentCampaigns = $state<Campaign[]>([])
+  let showCreateForm = $state(false)
 
   // Derive selected app from route param when on detail page, else from store
   const selectedAppId = $derived(page.params.id ?? applicationStore.selectedId)
@@ -29,7 +31,7 @@
       oninput={(e) => applicationStore.setSearchQuery((e.target as HTMLInputElement).value)}
       class="flex-1"
     />
-    <Button variant="primary" size="sm">+ Create</Button>
+    <Button variant="primary" size="sm" onclick={() => (showCreateForm = true)}>+ Create</Button>
   </div>
 
   <!-- Application cards -->
@@ -55,4 +57,6 @@
       {/each}
     </div>
   </div>
+
+  <CreateApplicationForm bind:open={showCreateForm} />
 </div>
