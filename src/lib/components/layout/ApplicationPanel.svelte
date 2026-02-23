@@ -4,8 +4,8 @@
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { getRecentCampaigns } from '$lib/services/campaignService'
   import type { Campaign } from '$lib/types'
-  import Input from '$lib/components/ui/Input.svelte'
-  import Button from '$lib/components/ui/Button.svelte'
+  import { Input } from '$lib/components/ui/input/index.js'
+  import { Button } from '$lib/components/ui/button/index.js'
   import ApplicationCard from '$lib/components/dashboard/ApplicationCard.svelte'
   import CampaignCard from '$lib/components/dashboard/CampaignCard.svelte'
   import CreateApplicationForm from '$lib/components/applications/CreateApplicationForm.svelte'
@@ -31,7 +31,7 @@
       oninput={(e) => applicationStore.setSearchQuery((e.target as HTMLInputElement).value)}
       class="flex-1"
     />
-    <Button variant="primary" size="sm" onclick={() => (showCreateForm = true)}>+ Create</Button>
+    <Button size="sm" onclick={() => (showCreateForm = true)}>+ Create</Button>
   </div>
 
   <!-- Application cards -->

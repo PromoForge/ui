@@ -2,9 +2,9 @@
   import { createApplication } from '$lib/services/applicationService'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import type { CreateApplicationRequest } from '$lib/api/generated/types.gen'
-  import FormField from '$lib/components/ui/FormField.svelte'
-  import Input from '$lib/components/ui/Input.svelte'
-  import Textarea from '$lib/components/ui/Textarea.svelte'
+  import { Label } from '$lib/components/ui/label/index.js'
+  import { Input } from '$lib/components/ui/input/index.js'
+  import { Textarea } from '$lib/components/ui/textarea/index.js'
   import Select from '$lib/components/ui/Select.svelte'
   import SlidePanel from '$lib/components/ui/SlidePanel.svelte'
 
@@ -115,28 +115,36 @@
       <div class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</div>
     {/if}
 
-    <FormField label="Name" required>
+    <div class="flex flex-col gap-1.5">
+      <Label class="text-sm font-medium">Name</Label>
       <Input placeholder="Application name" bind:value={name} />
-    </FormField>
+    </div>
 
-    <FormField label="Description">
+    <div class="flex flex-col gap-1.5">
+      <Label class="text-sm font-medium">
+        Description <span class="font-normal text-muted-foreground">(optional)</span>
+      </Label>
       <Textarea placeholder="Describe this application" bind:value={description} />
-    </FormField>
+    </div>
 
-    <FormField label="Currency" required>
+    <div class="flex flex-col gap-1.5">
+      <Label class="text-sm font-medium">Currency</Label>
       <Select bind:value={currency} options={currencyOptions} />
-    </FormField>
+    </div>
 
-    <FormField label="Time zone" required>
+    <div class="flex flex-col gap-1.5">
+      <Label class="text-sm font-medium">Time zone</Label>
       <Select bind:value={timezone} options={timezoneOptions} />
-    </FormField>
+    </div>
 
-    <FormField label="Code case sensitivity" required>
+    <div class="flex flex-col gap-1.5">
+      <Label class="text-sm font-medium">Code case sensitivity</Label>
       <Select bind:value={caseSensitivity} options={caseSensitivityOptions} />
-    </FormField>
+    </div>
 
-    <FormField label="Application environment" required>
+    <div class="flex flex-col gap-1.5">
+      <Label class="text-sm font-medium">Application environment</Label>
       <Select bind:value={environment} options={environmentOptions} />
-    </FormField>
+    </div>
   </div>
 </SlidePanel>

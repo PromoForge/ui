@@ -1,7 +1,7 @@
 <script lang="ts">
   import { MoreVertical } from 'lucide-svelte'
   import Card from '$lib/components/ui/Card.svelte'
-  import Button from '$lib/components/ui/Button.svelte'
+  import { Button } from '$lib/components/ui/button/index.js'
   import type { CampaignStatus } from '$lib/types'
 
   let {
