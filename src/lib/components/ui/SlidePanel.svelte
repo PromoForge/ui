@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte'
-  import Button from './Button.svelte'
+  import { Button } from '$lib/components/ui/button/index.js'
 
   let {
     open = $bindable(false),
@@ -54,7 +54,7 @@
       <!-- Footer -->
       <div class="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
         <Button variant="ghost" onclick={() => (open = false)}>Cancel</Button>
-        <Button variant="primary" onclick={onsubmit} disabled={loading}>
+        <Button onclick={onsubmit} disabled={loading}>
           {loading ? 'Saving...' : submitLabel}
         </Button>
       </div>

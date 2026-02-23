@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from '$lib/components/ui/Modal.svelte'
-  import Button from '$lib/components/ui/Button.svelte'
+  import { Button } from '$lib/components/ui/button/index.js'
   import type { CampaignListItem } from '$lib/types'
 
   let {
@@ -45,7 +45,7 @@
 
     <div class="flex justify-end gap-2">
       <Button variant="secondary" onclick={() => open = false}>Cancel</Button>
-      <Button variant="primary" onclick={handleConfirm}>Confirm</Button>
+      <Button onclick={handleConfirm}>Confirm</Button>
     </div>
   </div>
 </Modal>
