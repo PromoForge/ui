@@ -1,6 +1,8 @@
 <script lang="ts">
-  import Modal from '$lib/components/ui/Modal.svelte'
+  import * as Dialog from '$lib/components/ui/dialog/index.js'
   import { Button } from '$lib/components/ui/button/index.js'
+  import { Input } from '$lib/components/ui/input/index.js'
+  import { Label } from '$lib/components/ui/label/index.js'
   import type { CampaignListItem } from '$lib/types'
 
   let {
@@ -29,23 +31,20 @@
   }
 </script>
 
-<Modal bind:open title="Copy Campaign">
-  <div class="space-y-4">
-    <div>
-      <label for="clone-name" class="block text-sm font-medium text-gray-700">
-        Campaign name
-      </label>
-      <input
-        id="clone-name"
-        type="text"
-        bind:value={cloneName}
-        class="mt-1 w-full rounded-lg border border-border bg-panel px-3 py-2 text-sm text-ink outline-none focus:ring-2 focus:ring-primary/20"
-      />
+<Dialog.Root bind:open>
+  <Dialog.Content>
+    <Dialog.Header>
+      <Dialog.Title>Copy Campaign</Dialog.Title>
+    </Dialog.Header>
+    <div class="space-y-4">
+      <div class="flex flex-col gap-1.5">
+        <Label for="clone-name" class="text-sm font-medium">Campaign name</Label>
+        <Input id="clone-name" bind:value={cloneName} />
+      </div>
     </div>
-
-    <div class="flex justify-end gap-2">
+    <Dialog.Footer>
       <Button variant="secondary" onclick={() => open = false}>Cancel</Button>
       <Button onclick={handleConfirm}>Confirm</Button>
-    </div>
-  </div>
-</Modal>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>

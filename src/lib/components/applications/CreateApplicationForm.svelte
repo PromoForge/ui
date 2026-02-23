@@ -2,11 +2,12 @@
   import { createApplication } from '$lib/services/applicationService'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import type { CreateApplicationRequest } from '$lib/api/generated/types.gen'
+  import * as Sheet from '$lib/components/ui/sheet/index.js'
+  import * as Select from '$lib/components/ui/select/index.js'
   import { Label } from '$lib/components/ui/label/index.js'
   import { Input } from '$lib/components/ui/input/index.js'
   import { Textarea } from '$lib/components/ui/textarea/index.js'
-  import Select from '$lib/components/ui/Select.svelte'
-  import SlidePanel from '$lib/components/ui/SlidePanel.svelte'
+  import { Button } from '$lib/components/ui/button/index.js'
 
   let {
     open = $bindable(false)
@@ -103,48 +104,91 @@
   }
 </script>
 
-<SlidePanel
-  bind:open
-  title="Create an Application"
-  submitLabel="Create Application"
-  onsubmit={handleSubmit}
-  {loading}
->
-  <div class="flex flex-col gap-5">
-    {#if error}
-      <div class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</div>
-    {/if}
+<Sheet.Root bind:open>
+  <Sheet.Content side="right">
+    <Sheet.Header>
+      <Sheet.Title>Create an Application</Sheet.Title>
+    </Sheet.Header>
+    <div class="flex-1 overflow-y-auto px-6 py-6">
+      <div class="flex flex-col gap-5">
+        {#if error}
+          <div class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</div>
+        {/if}
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Name</Label>
-      <Input placeholder="Application name" bind:value={name} />
-    </div>
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Name</Label>
+          <Input placeholder="Application name" bind:value={name} />
+        </div>
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">
-        Description <span class="font-normal text-muted-foreground">(optional)</span>
-      </Label>
-      <Textarea placeholder="Describe this application" bind:value={description} />
-    </div>
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">
+            Description <span class="font-normal text-muted-foreground">(optional)</span>
+          </Label>
+          <Textarea placeholder="Describe this application" bind:value={description} />
+        </div>
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Currency</Label>
-      <Select bind:value={currency} options={currencyOptions} />
-    </div>
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Currency</Label>
+          <Select.Root type="single" bind:value={currency}>
+            <Select.Trigger class="w-full">
+              {currencyOptions.find(o => o.value === currency)?.label ?? 'Select...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each currencyOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Time zone</Label>
-      <Select bind:value={timezone} options={timezoneOptions} />
-    </div>
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Time zone</Label>
+          <Select.Root type="single" bind:value={timezone}>
+            <Select.Trigger class="w-full">
+              {timezoneOptions.find(o => o.value === timezone)?.label ?? 'Select...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each timezoneOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Code case sensitivity</Label>
-      <Select bind:value={caseSensitivity} options={caseSensitivityOptions} />
-    </div>
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Code case sensitivity</Label>
+          <Select.Root type="single" bind:value={caseSensitivity}>
+            <Select.Trigger class="w-full">
+              {caseSensitivityOptions.find(o => o.value === caseSensitivity)?.label ?? 'Select...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each caseSensitivityOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Application environment</Label>
-      <Select bind:value={environment} options={environmentOptions} />
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Application environment</Label>
+          <Select.Root type="single" bind:value={environment}>
+            <Select.Trigger class="w-full">
+              {environmentOptions.find(o => o.value === environment)?.label ?? 'Select...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each environmentOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
+      </div>
     </div>
-  </div>
-</SlidePanel>
+    <Sheet.Footer>
+      <Sheet.Close>Cancel</Sheet.Close>
+      <Button onclick={handleSubmit} disabled={loading}>
+        {loading ? 'Saving...' : 'Create Application'}
+      </Button>
+    </Sheet.Footer>
+  </Sheet.Content>
+</Sheet.Root>
