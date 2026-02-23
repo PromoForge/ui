@@ -1,12 +1,36 @@
-import { mockApplications } from '$lib/mocks/applications'
-import type { Application } from '$lib/types'
+import {
+  backstageServiceListApplications,
+  backstageServiceGetApplication,
+  backstageServiceCreateApplication
+} from '$lib/api/generated'
+import type { Application, CreateApplicationRequest } from '$lib/api/generated/types.gen'
 
-// GET /v1/applications
 export async function getApplications(): Promise<Application[]> {
-  return mockApplications
+  const { data, error } = await backstageServiceListApplications()
+  if (error) {
+    throw new Error('Failed to load applications')
+  }
+  return data?.data ?? []
 }
 
-// GET /v1/applications/:id
-export async function getApplication(id: string): Promise<Application | undefined> {
-  return mockApplications.find((app) => app.id === id)
+export async function getApplication(id: number): Promise<Application | undefined> {
+  const { data, error } = await backstageServiceGetApplication({
+    path: { applicationId: id }
+  })
+  if (error) {
+    throw new Error('Failed to load application')
+  }
+  return data?.application
+}
+
+export async function createApplication(
+  request: CreateApplicationRequest
+): Promise<Application> {
+  const { data, error } = await backstageServiceCreateApplication({
+    body: request
+  })
+  if (error) {
+    throw new Error('Failed to create application')
+  }
+  return data!.application!
 }
