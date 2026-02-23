@@ -19,7 +19,7 @@
 
 <a
   {href}
-  class="group block w-full cursor-pointer rounded-lg bg-panel p-4 text-left shadow-card transition-all hover:shadow-md {selected
+  class="group block w-full cursor-pointer rounded-lg bg-card p-4 text-left shadow-card transition-all hover:shadow-md {selected
     ? 'border-l-2 border-primary bg-blue-50/50'
     : 'border-l-2 border-transparent'}"
   onclick={onclick}
@@ -30,7 +30,7 @@
   </div>
 
   <!-- App name -->
-  <h3 class="mt-2 text-base font-bold text-ink">{application.name}</h3>
+  <h3 class="mt-2 text-base font-bold text-foreground">{application.name}</h3>
 
   <!-- Description -->
   {#if application.description}

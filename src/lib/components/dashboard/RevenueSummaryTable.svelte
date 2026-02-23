@@ -41,7 +41,7 @@
   }
 </script>
 
-<div class="rounded-lg bg-panel p-4 shadow-card {className}">
+<div class="rounded-lg bg-card p-4 shadow-card {className}">
   <table class="w-full">
     <thead>
       <tr class="border-b border-border">
@@ -61,7 +61,7 @@
               {#if rowMeta[row.label]?.color}
                 <span class="inline-block h-2.5 w-2.5 rounded-sm {rowMeta[row.label].color}"></span>
               {/if}
-              <span class="text-sm font-medium text-ink">{row.label}</span>
+              <span class="text-sm font-medium text-foreground">{row.label}</span>
               {#if rowMeta[row.label]?.tooltip}
                 <Tooltip.Root>
                   <Tooltip.Trigger>
@@ -75,7 +75,7 @@
             </div>
           </td>
           {#each columns as col}
-            <td class="py-3 text-right font-mono text-sm text-ink">
+            <td class="py-3 text-right font-mono text-sm text-foreground">
               {formatCell(row, col.key)}
             </td>
           {/each}

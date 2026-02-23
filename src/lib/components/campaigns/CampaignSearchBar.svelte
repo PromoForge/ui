@@ -30,6 +30,6 @@
     placeholder="Campaign name, tags or id"
     {value}
     oninput={handleInput}
-    class="w-full rounded-lg border border-border bg-panel py-2 pl-9 pr-3 text-sm text-ink placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-primary/20"
+    class="w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm text-foreground placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-primary/20"
   />
 </div>

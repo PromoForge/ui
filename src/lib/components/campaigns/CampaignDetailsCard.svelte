@@ -26,7 +26,7 @@
 <Card.Root class={className}>
   <Card.Content>
   <div class="flex items-center justify-between">
-    <h3 class="text-sm font-semibold text-ink">Details</h3>
+    <h3 class="text-sm font-semibold text-foreground">Details</h3>
     <button class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
       <Settings size={16} />
     </button>
@@ -43,7 +43,7 @@
   <hr class="my-4 border-border" />
 
   <div class="flex items-center justify-between">
-    <h3 class="text-sm font-semibold text-ink">Tags</h3>
+    <h3 class="text-sm font-semibold text-foreground">Tags</h3>
     <button class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
       <Settings size={16} />
     </button>

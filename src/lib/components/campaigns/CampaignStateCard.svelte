@@ -40,11 +40,11 @@
 
 <Card.Root class={className}>
   <Card.Content>
-  <h3 class="text-sm font-semibold text-ink">State</h3>
+  <h3 class="text-sm font-semibold text-foreground">State</h3>
 
   <div class="mt-3 flex items-center gap-2">
     <span class="h-2.5 w-2.5 rounded-full {config.dotColor}"></span>
-    <span class="text-sm font-semibold text-ink">{config.label}</span>
+    <span class="text-sm font-semibold text-foreground">{config.label}</span>
   </div>
 
   <p class="mt-2 text-sm text-gray-500">{config.description}</p>

@@ -40,7 +40,7 @@
   }
 </script>
 
-<div class="rounded-lg bg-panel shadow-card {className}">
+<div class="rounded-lg bg-card shadow-card {className}">
   <!-- Header -->
   <div class="flex items-center justify-between px-4 pt-4 pb-3">
     <div class="flex items-center gap-2">
@@ -48,7 +48,7 @@
         {@const Icon = icon}
         <Icon size={16} class="text-gray-400" />
       {/if}
-      <span class="text-sm font-semibold text-ink">{metric.title}</span>
+      <span class="text-sm font-semibold text-foreground">{metric.title}</span>
     </div>
     <div class="flex items-center gap-1">
       <button class="rounded p-1 text-gray-400 hover:text-gray-600">
@@ -66,7 +66,7 @@
     <div class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
       {metric.total.label}
     </div>
-    <div class="mt-1 font-mono text-2xl font-semibold text-ink">
+    <div class="mt-1 font-mono text-2xl font-semibold text-foreground">
       {formatValue(metric.total.value, metric.formatAs)}
     </div>
     <div class="mt-1 flex items-center gap-1 text-xs">
@@ -86,7 +86,7 @@
         Influenced
       </div>
       <div class="mt-1 flex items-baseline gap-2">
-        <span class="font-mono text-2xl font-semibold text-ink">
+        <span class="font-mono text-2xl font-semibold text-foreground">
           {formatValue(metric.influenced.value, metric.formatAs)}
         </span>
         <span class="text-xs text-gray-500">

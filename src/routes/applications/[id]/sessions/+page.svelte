@@ -17,7 +17,7 @@
   <Breadcrumb items={breadcrumbItems} />
 
   <div class="mt-12 flex flex-col items-center justify-center text-center">
-    <h2 class="text-lg font-semibold text-ink">Sessions</h2>
+    <h2 class="text-lg font-semibold text-foreground">Sessions</h2>
     <p class="mt-2 text-sm text-gray-500">This section is coming soon.</p>
   </div>
 </div>

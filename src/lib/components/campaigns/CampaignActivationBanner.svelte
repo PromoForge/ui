@@ -17,7 +17,7 @@
 {#if showBanner && hasCards}
   <div class="rounded-lg border border-blue-200 bg-blue-50/50 p-4 {className}">
     <div class="flex items-start justify-between">
-      <h3 class="text-sm font-semibold text-ink">
+      <h3 class="text-sm font-semibold text-foreground">
         Consider the following steps before activating your campaign
       </h3>
       <button
@@ -30,7 +30,7 @@
 
     <div class="mt-3 flex gap-3">
       {#if showScheduleCard}
-        <div class="relative flex-1 rounded-lg border border-border bg-panel p-4">
+        <div class="relative flex-1 rounded-lg border border-border bg-card p-4">
           <button
             class="absolute right-2 top-2 rounded-lg p-0.5 text-gray-400 hover:text-gray-600"
             onclick={() => showScheduleCard = false}
@@ -48,7 +48,7 @@
       {/if}
 
       {#if showCouponsCard}
-        <div class="relative flex-1 rounded-lg border border-border bg-panel p-4">
+        <div class="relative flex-1 rounded-lg border border-border bg-card p-4">
           <button
             class="absolute right-2 top-2 rounded-lg p-0.5 text-gray-400 hover:text-gray-600"
             onclick={() => showCouponsCard = false}

@@ -13,7 +13,7 @@
 
 <Card.Root class={className}>
   <Card.Content>
-  <h3 class="text-sm font-semibold text-ink">Rules</h3>
+  <h3 class="text-sm font-semibold text-foreground">Rules</h3>
 
   {#if rules.length > 0}
     <p class="mt-2 text-sm text-gray-500">The campaign contains the following rules:</p>
@@ -21,7 +21,7 @@
     <div class="mt-3 space-y-3">
       {#each rules as rule}
         <div>
-          <p class="text-sm font-medium text-ink">{rule.name}</p>
+          <p class="text-sm font-medium text-foreground">{rule.name}</p>
           <p class="text-xs text-gray-400">
             Defined by {rule.conditions} condition{rule.conditions !== 1 ? 's' : ''} and {rule.effects} effect{rule.effects !== 1 ? 's' : ''}
           </p>

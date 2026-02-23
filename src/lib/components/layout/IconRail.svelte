@@ -32,7 +32,7 @@
   }
 </script>
 
-<nav class="flex h-full w-14 flex-col items-center border-r border-border bg-panel py-4">
+<nav class="flex h-full w-14 flex-col items-center border-r border-border bg-card py-4">
   <!-- Logo mark -->
   <div class="mb-6 flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
     PF

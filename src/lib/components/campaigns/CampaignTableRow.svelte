@@ -32,7 +32,7 @@
   <td class="whitespace-nowrap px-3 py-3 text-sm font-medium">
     <a
       href="/applications/{campaign.applicationId}/campaigns/{campaign.id}/dashboard"
-      class="text-ink hover:text-primary hover:underline"
+      class="text-foreground hover:text-primary hover:underline"
     >
       {campaign.name}
     </a>

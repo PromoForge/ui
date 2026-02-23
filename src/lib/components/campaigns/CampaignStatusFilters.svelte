@@ -33,7 +33,7 @@
       class="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors {
         activeFilters.has(filter.status)
           ? 'border-primary bg-blue-50 text-primary'
-          : 'border-border bg-panel text-gray-600 hover:border-gray-300'
+          : 'border-border bg-card text-gray-600 hover:border-gray-300'
       }"
       onclick={() => ontoggle(filter.status)}
     >

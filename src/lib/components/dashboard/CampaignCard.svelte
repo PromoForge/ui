@@ -18,7 +18,7 @@
   }
 </script>
 
-<div class="rounded-lg bg-panel p-3 shadow-card">
+<div class="rounded-lg bg-card p-3 shadow-card">
   <!-- App badge -->
   <div class="flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-gray-400">
     <span class="inline-block h-2 w-2 rounded-sm {envColors[campaign.applicationName] ?? 'bg-gray-300'}"></span>
@@ -28,7 +28,7 @@
   <!-- Campaign name with status dot -->
   <div class="mt-1.5 flex items-center gap-1.5">
     <span class="inline-block h-2 w-2 rounded-full {statusColors[campaign.status]}"></span>
-    <span class="text-sm font-medium text-ink">{campaign.name}</span>
+    <span class="text-sm font-medium text-foreground">{campaign.name}</span>
   </div>
 
   <!-- Updated info -->

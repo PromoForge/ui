@@ -49,11 +49,4 @@
   --color-coral: #F87171;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-  /* Backward-compatible aliases (remove after full migration) */
-  --color-surface: var(--background);
-  --color-panel: var(--card);
-  --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-danger: var(--destructive);
-  --color-ink: var(--foreground);
 }

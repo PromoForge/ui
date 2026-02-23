@@ -15,7 +15,7 @@
 
 <Card.Root class={className}>
   <Card.Content>
-  <h3 class="text-sm font-semibold text-ink">Performance and Budgets</h3>
+  <h3 class="text-sm font-semibold text-foreground">Performance and Budgets</h3>
 
   <div class="mt-3 flex items-center gap-2 text-sm text-gray-600">
     <BarChart3 size={16} />

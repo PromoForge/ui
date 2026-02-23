@@ -26,7 +26,7 @@
       <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">Campaigns</span>
 
       <!-- Dropdown button -->
-      <button class="flex items-center gap-1.5 rounded-lg border border-border bg-panel px-3 py-1.5 text-sm text-ink">
+      <button class="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-sm text-foreground">
         All campaigns
         <ChevronDown size={14} class="text-gray-400" />
       </button>
@@ -40,7 +40,7 @@
         class="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors {
           activeFilters.has(filter.status)
             ? 'border-primary bg-blue-50 text-primary'
-            : 'border-border bg-panel text-gray-600 hover:border-gray-300'
+            : 'border-border bg-card text-gray-600 hover:border-gray-300'
         }"
         onclick={() => ontoggle(filter.status)}
       >

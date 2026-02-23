@@ -12,12 +12,12 @@
   <IconRail />
 
   <!-- Zone B: Application Panel -->
-  <aside class="overflow-y-auto border-r border-border bg-panel">
+  <aside class="overflow-y-auto border-r border-border bg-card">
     {@render sidebar()}
   </aside>
 
   <!-- Zone C: Main Dashboard -->
-  <main class="overflow-y-auto bg-surface">
+  <main class="overflow-y-auto bg-background">
     {@render children()}
   </main>
 </div>

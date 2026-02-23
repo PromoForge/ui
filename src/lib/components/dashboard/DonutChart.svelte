@@ -22,6 +22,6 @@
   </Chart>
   <!-- Centered percentage label -->
   <div class="absolute inset-0 flex items-center justify-center">
-    <span class="font-mono text-2xl font-bold text-ink">{percentage}%</span>
+    <span class="font-mono text-2xl font-bold text-foreground">{percentage}%</span>
   </div>
 </div>

@@ -75,11 +75,11 @@
     </span>
     <div class="relative mt-1">
       <button
-        class="flex w-full items-center justify-between rounded-lg border border-border bg-panel px-3 py-2 text-left text-sm"
+        class="flex w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-left text-sm"
         onclick={(e: MouseEvent) => { e.stopPropagation(); showAppDropdown = !showAppDropdown }}
       >
         <div>
-          <div class="font-semibold text-ink">{applicationName}</div>
+          <div class="font-semibold text-foreground">{applicationName}</div>
           <div class="mt-0.5">
             <Badge
               variant={environment === 'APPLICATION_ENVIRONMENT_LIVE' ? 'live' : 'sandbox'}
@@ -91,7 +91,7 @@
 
       {#if showAppDropdown}
         <div
-          class="absolute z-10 mt-1 w-full rounded-lg border border-border bg-panel py-1 shadow-card"
+          class="absolute z-10 mt-1 w-full rounded-lg border border-border bg-card py-1 shadow-card"
           role="menu"
           tabindex="-1"
           onclick={(e: MouseEvent) => e.stopPropagation()}
@@ -100,7 +100,7 @@
           {#each applicationStore.applications as app (app.id)}
             <button
               class="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 {
-                applicationId === String(app.id) ? 'bg-blue-50 text-primary' : 'text-ink'
+                applicationId === String(app.id) ? 'bg-blue-50 text-primary' : 'text-foreground'
               }"
               onclick={() => selectApp(String(app.id))}
             >

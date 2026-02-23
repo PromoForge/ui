@@ -61,7 +61,7 @@
   <!-- Tab content -->
   {#if campaignListStore.activeTab === 'calendar'}
     <div class="mt-12 flex flex-col items-center justify-center text-center">
-      <h2 class="text-lg font-semibold text-ink">Calendar View</h2>
+      <h2 class="text-lg font-semibold text-foreground">Calendar View</h2>
       <p class="mt-2 text-sm text-gray-500">This view is coming soon.</p>
     </div>
   {:else}

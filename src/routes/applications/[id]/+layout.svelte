@@ -27,7 +27,7 @@
 <div class="grid h-screen grid-cols-[56px_220px_1fr]">
   <IconRail {currentPath} />
 
-  <aside class="overflow-y-auto border-r border-border bg-panel">
+  <aside class="overflow-y-auto border-r border-border bg-card">
     {#if inCampaignDetail}
       <CampaignContextPanel
         applicationId={appId}
@@ -46,7 +46,7 @@
     {/if}
   </aside>
 
-  <main class="overflow-y-auto bg-surface">
+  <main class="overflow-y-auto bg-background">
     {@render children()}
   </main>
 </div>

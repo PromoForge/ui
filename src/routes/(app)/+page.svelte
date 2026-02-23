@@ -3,7 +3,7 @@
 </script>
 
 <div class="p-6">
-  <h1 class="text-xl font-bold text-ink">My Account Dashboard</h1>
+  <h1 class="text-xl font-bold text-foreground">My Account Dashboard</h1>
   <p class="mt-2 text-sm text-gray-500">
     Select an application from the sidebar to view its dashboard.
   </p>

@@ -15,7 +15,7 @@
   )
 </script>
 
-<div class="h-full w-full rounded-lg bg-panel p-4 shadow-card {className}">
+<div class="h-full w-full rounded-lg bg-card p-4 shadow-card {className}">
   <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Revenue Overview</h3>
   <div class="h-[calc(100%-28px)]">
     <Chart

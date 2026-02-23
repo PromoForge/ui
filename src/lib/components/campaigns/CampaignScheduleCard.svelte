@@ -15,7 +15,7 @@
 
 <Card.Root class={className}>
   <Card.Content>
-  <h3 class="text-sm font-semibold text-ink">Schedule</h3>
+  <h3 class="text-sm font-semibold text-foreground">Schedule</h3>
 
   {#if hasSchedule}
     <div class="mt-3 space-y-1 text-sm text-gray-600">

@@ -47,7 +47,7 @@
     </div>
   {:else}
     <div class="mt-12 flex flex-col items-center justify-center text-center">
-      <h2 class="text-lg font-semibold text-ink">Campaign not found</h2>
+      <h2 class="text-lg font-semibold text-foreground">Campaign not found</h2>
       <p class="mt-2 text-sm text-gray-500">The requested campaign could not be loaded.</p>
     </div>
   {/if}
