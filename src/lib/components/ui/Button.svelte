@@ -4,12 +4,14 @@
   let {
     variant = 'primary',
     size = 'md',
+    disabled = false,
     onclick,
     children,
     class: className = ''
   }: {
     variant?: 'primary' | 'secondary' | 'ghost'
     size?: 'sm' | 'md'
+    disabled?: boolean
     onclick?: () => void
     children: Snippet
     class?: string
@@ -31,7 +33,10 @@
 
 <button
   class="{baseClasses} {variantClasses[variant]} {sizeClasses[size]} {className}"
-  onclick={onclick}
+  {disabled}
+  class:opacity-50={disabled}
+  class:cursor-not-allowed={disabled}
+  onclick={disabled ? undefined : onclick}
 >
   {@render children()}
 </button>
