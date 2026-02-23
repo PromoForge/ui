@@ -4,34 +4,57 @@ Promotion engine frontend built with SvelteKit 2, Svelte 5, Tailwind CSS v4, and
 
 ## Commands
 
-- `bun run dev` — Start dev server (port 5173)
-- `bun run build` — Production build
-- `bun run preview` — Preview production build
-- `bun run check` — Run svelte-check for type errors
+- `make dev` — Start dev server (port 5173)
+- `make build` — Production build
+- `make check` — Run svelte-check for type errors
+- `make gen-api` — Regenerate TypeScript SDK from OpenAPI spec
+- `make update-api` — Pull latest api submodule and regenerate SDK
+- `make format` — Run prettier on src/
+- `make clean` — Remove build artifacts
+
+## Environment Variables
+
+- `PUBLIC_API_URL` — API base URL (e.g. `http://localhost:8080`). Set in `.env` file.
 
 ## Project Structure
 
 ```
+api/                         # Git submodule → github.com/PromoForge/api (OpenAPI specs)
 src/
 ├── lib/
+│   ├── api/
+│   │   ├── generated/       # Generated hey-api SDK (do not edit)
+│   │   └── client.ts        # Client config — sets base URL from PUBLIC_API_URL
 │   ├── components/
-│   │   ├── ui/            # Reusable UI primitives (Button, Card, Input, Modal, etc.)
-│   │   └── layout/        # App shell components (Sidebar, Header, AppShell)
-│   ├── stores/            # Svelte 5 rune-based state (use .svelte.ts extension)
-│   ├── services/          # API/backend service layer (stubs for now)
-│   ├── types/             # Shared TypeScript type definitions
-│   │   └── index.ts       # Re-exports all types
-│   └── utils/             # Pure utility/helper functions
-│       └── index.ts       # Re-exports all utils
+│   │   ├── ui/              # Reusable UI primitives (Button, Card, Input, Modal, etc.)
+│   │   └── layout/          # App shell components (Sidebar, Header, AppShell)
+│   ├── stores/              # Svelte 5 rune-based state (use .svelte.ts extension)
+│   ├── services/            # API/backend service layer
+│   ├── types/               # Shared TypeScript type definitions
+│   │   └── index.ts         # Re-exports all types
+│   └── utils/               # Pure utility/helper functions
+│       └── index.ts         # Re-exports all utils
 ├── routes/
-│   ├── +layout.svelte     # Root layout — wraps all pages in AppShell
-│   ├── +layout.ts         # SPA mode config (ssr=false, prerender=false)
-│   ├── +page.svelte       # Dashboard page (/)
+│   ├── +layout.svelte       # Root layout — wraps all pages in AppShell
+│   ├── +layout.ts           # SPA mode config (ssr=false, prerender=false)
+│   ├── +page.svelte         # Dashboard page (/)
 │   └── settings/
-│       └── +page.svelte   # Settings page (/settings)
-├── app.css                # Tailwind CSS v4 entry point
-└── app.html               # HTML template
+│       └── +page.svelte     # Settings page (/settings)
+├── app.css                  # Tailwind CSS v4 entry point
+└── app.html                 # HTML template
 ```
+
+## API SDK
+
+Typed API client is auto-generated from the PromoForge OpenAPI v3 spec using `@hey-api/openapi-ts`.
+
+- **Generated SDK:** `src/lib/api/generated/` — do NOT edit manually
+- **Client config:** `src/lib/api/client.ts` — configures base URL from `PUBLIC_API_URL`
+- **Source:** `api/openapi/openapiv3.yaml` (from the `api` git submodule)
+- **Config:** `openapi-ts.config.ts`
+- **Generator:** `@hey-api/openapi-ts` — run `make gen-api` to regenerate
+- **Update workflow:** When protos change in the `api` repo, run `make update-api` to pull latest spec and regenerate SDK
+- **Usage:** Import SDK functions from `$lib/api/generated` and types from `$lib/api/generated/types.gen`
 
 ## Conventions
 

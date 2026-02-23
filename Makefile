@@ -13,7 +13,7 @@ preview:
 	bun run preview
 
 gen-api:
-	bunx openapi-typescript api/openapi/openapiv3.yaml -o src/lib/api/v1.d.ts
+	bunx openapi-ts
 
 update-api:
 	git submodule update --remote api
