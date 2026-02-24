@@ -16,13 +16,21 @@
     application: Application
   } = $props()
 
-  let name = $state(application.name ?? '')
-  let description = $state(application.description ?? '')
-  let currency = $state(application.currency ?? 'SAR')
-  let timezone = $state(application.timezone ?? 'Asia/Riyadh')
+  let name = $state('')
+  let description = $state('')
+  let currency = $state('SAR')
+  let timezone = $state('Asia/Riyadh')
   let saving = $state(false)
   let error = $state('')
   let success = $state(false)
+
+  // Sync local state when the application prop changes (initial load + after save)
+  $effect(() => {
+    name = application.name ?? ''
+    description = application.description ?? ''
+    currency = application.currency ?? 'SAR'
+    timezone = application.timezone ?? 'Asia/Riyadh'
+  })
 
   const hasChanges = $derived(
     name !== (application.name ?? '') ||
