@@ -3,7 +3,6 @@
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import Breadcrumb from '$lib/components/ui/app-breadcrumb.svelte'
   import { Button } from '$lib/components/ui/button/index.js'
-  import { Separator } from '$lib/components/ui/separator/index.js'
   import ApplicationDetailsForm from '$lib/components/settings/ApplicationDetailsForm.svelte'
 
   const appId = $derived(page.params.id)
@@ -30,19 +29,21 @@
 
   <div class="mt-6 flex gap-8">
     <!-- Left sub-nav -->
-    <nav class="flex w-48 shrink-0 flex-col gap-1">
-      {#each tabs as tab (tab.id)}
-        <Button
-          variant={activeTab === tab.id ? 'secondary' : 'ghost'}
-          class="justify-start"
-          onclick={() => (activeTab = tab.id)}
-        >
-          {tab.label}
-        </Button>
-      {/each}
+    <nav class="w-48 shrink-0">
+      <h3 class="text-sm font-semibold text-foreground">Settings</h3>
+      <div class="mt-1 flex flex-col gap-0.5">
+        {#each tabs as tab (tab.id)}
+          <Button
+            variant={activeTab === tab.id ? 'secondary' : 'ghost'}
+            size="sm"
+            class="justify-start"
+            onclick={() => (activeTab = tab.id)}
+          >
+            {tab.label}
+          </Button>
+        {/each}
+      </div>
     </nav>
-
-    <Separator orientation="vertical" class="h-auto" />
 
     <!-- Right content -->
     <div class="flex-1">
