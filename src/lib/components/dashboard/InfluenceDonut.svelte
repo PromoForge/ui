@@ -26,7 +26,7 @@
             innerRadius={0.72}
             cornerRadius={3}
             fill="#F87171"
-            track={{ fill: '#F3F4F6' }}
+            track={{ fill: 'var(--color-muted)' }}
           />
         </Svg>
       </Chart>

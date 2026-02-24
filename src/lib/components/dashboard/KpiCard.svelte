@@ -19,6 +19,7 @@
 </script>
 
 <Card.Root class="relative overflow-hidden {className}">
+  <div class="absolute inset-x-0 top-0 h-0.5 bg-current {accentColor}"></div>
   <Card.Content class="p-5">
     <div class="flex items-center justify-between">
       <span class="text-xs font-medium text-muted-foreground">{label}</span>
@@ -33,7 +34,7 @@
         </Tooltip.Root>
       {/if}
     </div>
-    <div class="mt-1 font-mono text-3xl font-bold {accentColor}">
+    <div class="mt-2 font-mono text-3xl font-bold tracking-tight {accentColor}">
       {value.toLocaleString()}
     </div>
   </Card.Content>

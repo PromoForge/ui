@@ -100,7 +100,7 @@
     />
 
     <!-- Charts Row -->
-    <div class="grid grid-cols-[1fr_240px] gap-4">
+    <div class="grid grid-cols-[1fr_280px] gap-4">
       <RevenueChart data={dashboardStore.data.revenueChart} />
       <InfluenceDonut summary={dashboardStore.data.pastWeekSummary} />
     </div>
@@ -108,11 +108,12 @@
     <!-- Revenue Summary Table -->
     <RevenueSummaryTable rows={dashboardStore.data.revenueSummary} />
   {:else if dashboardStore.loading}
-    <div class="flex h-64 items-center justify-center">
+    <div class="flex h-64 flex-col items-center justify-center gap-3">
+      <div class="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground/20 border-t-primary"></div>
       <span class="text-sm text-muted-foreground">Loading dashboard...</span>
     </div>
   {:else}
-    <div class="flex h-64 items-center justify-center">
+    <div class="flex h-64 flex-col items-center justify-center gap-2">
       <span class="text-sm text-muted-foreground">Select an application to view analytics.</span>
     </div>
   {/if}

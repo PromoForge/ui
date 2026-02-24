@@ -48,7 +48,7 @@
     <Table.Root>
       <Table.Header>
         <Table.Row class="hover:bg-transparent">
-          <Table.Head class="w-52"></Table.Head>
+          <Table.Head class="w-52 text-[10px] font-semibold uppercase tracking-wide">Metric</Table.Head>
           {#each columns as col}
             <Table.Head class="text-right text-[10px] font-semibold uppercase tracking-wide">
               {col.label}
