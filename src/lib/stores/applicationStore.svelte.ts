@@ -1,5 +1,5 @@
-import { getApplications } from '$lib/services/applicationService'
-import type { Application } from '$lib/api/generated/types.gen'
+import { getApplications, updateApplication as updateApplicationApi } from '$lib/services/applicationService'
+import type { Application, UpdateApplicationRequest } from '$lib/api/generated/types.gen'
 
 function createApplicationStore() {
   let applications = $state<Application[]>([])
@@ -39,6 +39,11 @@ function createApplicationStore() {
     searchQuery = query
   }
 
+  async function updateApplication(id: number, request: UpdateApplicationRequest): Promise<void> {
+    const updated = await updateApplicationApi(id, request)
+    applications = applications.map((a) => (a.id === updated.id ? updated : a))
+  }
+
   return {
     get applications() { return applications },
     get selectedId() { return selectedId },
@@ -48,7 +53,8 @@ function createApplicationStore() {
     get loading() { return loading },
     loadApplications,
     selectApplication,
-    setSearchQuery
+    setSearchQuery,
+    updateApplication
   }
 }
 
