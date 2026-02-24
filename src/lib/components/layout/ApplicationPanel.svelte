@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { goto } from '$app/navigation'
   import { page } from '$app/state'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { getRecentCampaigns } from '$lib/services/campaignService'
@@ -42,6 +43,7 @@
         selected={selectedAppId === String(app.id)}
         href="/applications/{app.id}"
         onclick={() => applicationStore.selectApplication(String(app.id))}
+        onedit={() => goto(`/applications/${app.id}/settings-app`)}
       />
     {/each}
   </div>
