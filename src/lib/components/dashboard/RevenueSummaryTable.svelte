@@ -2,6 +2,8 @@
   import { Info } from 'lucide-svelte'
   import type { RevenueSummaryRow } from '$lib/types'
   import { formatCurrency, formatPercent } from '$lib/utils'
+  import * as Card from '$lib/components/ui/card/index.js'
+  import * as Table from '$lib/components/ui/table/index.js'
   import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 
   let { rows, class: className = '' }: {
@@ -30,7 +32,7 @@
     },
     'Influence Rate': {
       color: '',
-      tooltip: ''
+      tooltip: 'Percentage of total revenue that was influenced by promotions'
     }
   }
 
@@ -41,46 +43,48 @@
   }
 </script>
 
-<div class="rounded-lg bg-card p-4 shadow-card {className}">
-  <table class="w-full">
-    <thead>
-      <tr class="border-b border-border">
-        <th class="pb-3 text-left text-[10px] font-semibold uppercase tracking-wide text-gray-400"></th>
-        {#each columns as col}
-          <th class="pb-3 text-right text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-            {col.label}
-          </th>
-        {/each}
-      </tr>
-    </thead>
-    <tbody>
-      {#each rows as row}
-        <tr class="border-b border-border last:border-b-0 hover:bg-gray-50">
-          <td class="py-3 pr-4">
-            <div class="flex items-center gap-2">
-              {#if rowMeta[row.label]?.color}
-                <span class="inline-block h-2.5 w-2.5 rounded-sm {rowMeta[row.label].color}"></span>
-              {/if}
-              <span class="text-sm font-medium text-foreground">{row.label}</span>
-              {#if rowMeta[row.label]?.tooltip}
-                <Tooltip.Root>
-                  <Tooltip.Trigger>
-                    <Info size={14} class="text-gray-400" />
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>
-                    <p>{rowMeta[row.label].tooltip}</p>
-                  </Tooltip.Content>
-                </Tooltip.Root>
-              {/if}
-            </div>
-          </td>
+<Card.Root class={className}>
+  <Card.Content class="p-0">
+    <Table.Root>
+      <Table.Header>
+        <Table.Row class="hover:bg-transparent">
+          <Table.Head class="w-52"></Table.Head>
           {#each columns as col}
-            <td class="py-3 text-right font-mono text-sm text-foreground">
-              {formatCell(row, col.key)}
-            </td>
+            <Table.Head class="text-right text-[10px] font-semibold uppercase tracking-wide">
+              {col.label}
+            </Table.Head>
           {/each}
-        </tr>
-      {/each}
-    </tbody>
-  </table>
-</div>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {#each rows as row}
+          <Table.Row>
+            <Table.Cell class="py-3.5">
+              <div class="flex items-center gap-2">
+                {#if rowMeta[row.label]?.color}
+                  <span class="inline-block h-2.5 w-2.5 rounded-sm {rowMeta[row.label].color}"></span>
+                {/if}
+                <span class="text-sm font-medium text-foreground">{row.label}</span>
+                {#if rowMeta[row.label]?.tooltip}
+                  <Tooltip.Root>
+                    <Tooltip.Trigger>
+                      <Info size={14} class="text-muted-foreground/60" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      <p class="max-w-48 text-xs">{rowMeta[row.label].tooltip}</p>
+                    </Tooltip.Content>
+                  </Tooltip.Root>
+                {/if}
+              </div>
+            </Table.Cell>
+            {#each columns as col}
+              <Table.Cell class="py-3.5 text-right font-mono text-sm">
+                {formatCell(row, col.key)}
+              </Table.Cell>
+            {/each}
+          </Table.Row>
+        {/each}
+      </Table.Body>
+    </Table.Root>
+  </Card.Content>
+</Card.Root>
