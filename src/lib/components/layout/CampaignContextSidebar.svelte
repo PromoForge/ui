@@ -76,7 +76,7 @@
           {#each navItems as item}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton isActive={isActive(item.href)}>
-                {#snippet child({ props })}
+                {#snippet child({ props }: { props: Record<string, unknown> })}
                   <a href={item.href} {...props} class="{props.class} justify-between">
                     <span class="flex items-center gap-2">
                       <item.icon />

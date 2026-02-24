@@ -29,7 +29,7 @@
       <Input
         placeholder="Search Applications"
         value={applicationStore.searchQuery}
-        oninput={(e) => applicationStore.setSearchQuery((e.target as HTMLInputElement).value)}
+        oninput={(e: Event) => applicationStore.setSearchQuery((e.target as HTMLInputElement).value)}
         class="flex-1"
       />
       <Button size="sm" onclick={() => (showCreateForm = true)}>+ Create</Button>
