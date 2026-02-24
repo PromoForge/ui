@@ -1,9 +1,10 @@
 import {
   backstageServiceListApplications,
   backstageServiceGetApplication,
-  backstageServiceCreateApplication
+  backstageServiceCreateApplication,
+  backstageServiceUpdateApplication
 } from '$lib/api/generated'
-import type { Application, CreateApplicationRequest } from '$lib/api/generated/types.gen'
+import type { Application, CreateApplicationRequest, UpdateApplicationRequest } from '$lib/api/generated/types.gen'
 
 export async function getApplications(): Promise<Application[]> {
   const { data, error } = await backstageServiceListApplications()
@@ -31,6 +32,20 @@ export async function createApplication(
   })
   if (error) {
     throw new Error('Failed to create application')
+  }
+  return data!.application!
+}
+
+export async function updateApplication(
+  applicationId: number,
+  request: UpdateApplicationRequest
+): Promise<Application> {
+  const { data, error } = await backstageServiceUpdateApplication({
+    path: { applicationId },
+    body: request
+  })
+  if (error) {
+    throw new Error('Failed to update application')
   }
   return data!.application!
 }
