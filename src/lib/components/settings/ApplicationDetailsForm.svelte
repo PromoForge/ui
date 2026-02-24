@@ -2,13 +2,14 @@
   import type { Application } from '$lib/api/generated/types.gen'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
   import { currencyOptions, timezoneOptions } from '$lib/constants/applicationOptions'
+  import * as Card from '$lib/components/ui/card/index.js'
   import * as Select from '$lib/components/ui/select/index.js'
   import * as Alert from '$lib/components/ui/alert/index.js'
   import { Label } from '$lib/components/ui/label/index.js'
   import { Input } from '$lib/components/ui/input/index.js'
   import { Textarea } from '$lib/components/ui/textarea/index.js'
   import { Button } from '$lib/components/ui/button/index.js'
-  import { CircleAlert } from 'lucide-svelte'
+  import { CircleAlert, Check } from 'lucide-svelte'
 
   let {
     application
@@ -24,7 +25,6 @@
   let error = $state('')
   let success = $state(false)
 
-  // Sync local state when the application prop changes (initial load + after save)
   $effect(() => {
     name = application.name ?? ''
     description = application.description ?? ''
@@ -86,49 +86,76 @@
     </Alert.Root>
   {/if}
 
-  <div class="mt-6 flex flex-col gap-6">
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Name</Label>
-      <Input bind:value={name} class="max-w-sm" />
-    </div>
+  {#if success}
+    <Alert.Root class="mt-4 border-success/30 bg-success/5 text-success">
+      <Check class="size-4" />
+      <Alert.Description>Application updated successfully.</Alert.Description>
+    </Alert.Root>
+  {/if}
 
-    <div class="flex flex-col gap-1.5">
-      <Label class="text-sm font-medium">Description</Label>
-      <Textarea bind:value={description} class="max-w-sm" rows={4} />
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 max-w-sm">
+  <!-- Identity -->
+  <Card.Root class="mt-6">
+    <Card.Header>
+      <Card.Title class="text-base">Identity</Card.Title>
+      <Card.Description>
+        The public name and description for this application.
+      </Card.Description>
+    </Card.Header>
+    <Card.Content class="space-y-5">
       <div class="flex flex-col gap-1.5">
-        <Label class="text-sm font-medium">Currency</Label>
-        <Select.Root type="single" bind:value={currency}>
-          <Select.Trigger class="w-full">
-            {currencyOptions.find(o => o.value === currency)?.label ?? 'Select...'}
-          </Select.Trigger>
-          <Select.Content>
-            {#each currencyOptions as option (option.value)}
-              <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
+        <Label class="text-sm font-medium">Name</Label>
+        <Input bind:value={name} class="max-w-sm" />
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <Label class="text-sm font-medium">Time zone</Label>
-        <Select.Root type="single" bind:value={timezone}>
-          <Select.Trigger class="w-full">
-            {timezoneOptions.find(o => o.value === timezone)?.label ?? 'Select...'}
-          </Select.Trigger>
-          <Select.Content>
-            {#each timezoneOptions as option (option.value)}
-              <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
-            {/each}
-          </Select.Content>
-        </Select.Root>
+        <Label class="text-sm font-medium">Description</Label>
+        <Textarea bind:value={description} class="max-w-sm" rows={3} placeholder="Optional description for this application" />
       </div>
-    </div>
-  </div>
+    </Card.Content>
+  </Card.Root>
 
-  <div class="mt-8 flex items-center justify-end gap-3">
+  <!-- Localization -->
+  <Card.Root class="mt-4">
+    <Card.Header>
+      <Card.Title class="text-base">Localization</Card.Title>
+      <Card.Description>
+        Currency and time zone used for discount calculations and scheduling.
+      </Card.Description>
+    </Card.Header>
+    <Card.Content>
+      <div class="grid grid-cols-2 gap-4 max-w-sm">
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Currency</Label>
+          <Select.Root type="single" bind:value={currency}>
+            <Select.Trigger class="w-full">
+              {currencyOptions.find(o => o.value === currency)?.label ?? 'Select...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each currencyOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <Label class="text-sm font-medium">Time zone</Label>
+          <Select.Root type="single" bind:value={timezone}>
+            <Select.Trigger class="w-full">
+              {timezoneOptions.find(o => o.value === timezone)?.label ?? 'Select...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each timezoneOptions as option (option.value)}
+                <Select.Item value={option.value} label={option.label}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
+      </div>
+    </Card.Content>
+  </Card.Root>
+
+  <div class="mt-6 flex items-center justify-end gap-3">
     <Button variant="ghost" onclick={handleCancel} disabled={saving}>Cancel</Button>
     <Button onclick={handleSave} disabled={!hasChanges || saving}>
       {#if saving}

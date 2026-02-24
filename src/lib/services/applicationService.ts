@@ -2,9 +2,15 @@ import {
   backstageServiceListApplications,
   backstageServiceGetApplication,
   backstageServiceCreateApplication,
-  backstageServiceUpdateApplication
+  backstageServiceUpdateApplication,
+  backstageServiceUpdateApplicationSettings
 } from '$lib/api/generated'
-import type { Application, CreateApplicationRequest, UpdateApplicationRequest } from '$lib/api/generated/types.gen'
+import type {
+  Application,
+  CreateApplicationRequest,
+  UpdateApplicationRequest,
+  UpdateApplicationSettingsRequest
+} from '$lib/api/generated/types.gen'
 
 export async function getApplications(): Promise<Application[]> {
   const { data, error } = await backstageServiceListApplications()
@@ -46,6 +52,20 @@ export async function updateApplication(
   })
   if (error) {
     throw new Error('Failed to update application')
+  }
+  return data!.application!
+}
+
+export async function updateApplicationSettings(
+  applicationId: number,
+  request: Omit<UpdateApplicationSettingsRequest, 'applicationId'>
+): Promise<Application> {
+  const { data, error } = await backstageServiceUpdateApplicationSettings({
+    path: { applicationId },
+    body: { ...request, applicationId }
+  })
+  if (error) {
+    throw new Error('Failed to update application settings')
   }
   return data!.application!
 }
