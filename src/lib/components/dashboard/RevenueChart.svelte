@@ -34,7 +34,7 @@
         tooltip={{ mode: 'bisect-x' }}
       >
         <Svg>
-          <LinearGradient id="revenueGradient" from="#F87171" to="#F87171" fromOpacity={0.3} toOpacity={0.02} vertical />
+          <LinearGradient id="revenueGradient" vertical stops={[['0%', 'rgba(248, 113, 113, 0.3)'], ['100%', 'rgba(248, 113, 113, 0.02)']]} />
           <Axis
             placement="left"
             format={(d) => abbreviateNumber(d)}
