@@ -32,7 +32,7 @@
   }
 </script>
 
-<nav class="flex h-full w-14 flex-col items-center border-r border-border bg-card py-4">
+<nav class="flex h-full w-14 flex-col items-center border-r border-sidebar-border bg-sidebar py-4">
   <!-- Logo mark -->
   <div class="mb-6 flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
     PF
@@ -46,7 +46,7 @@
         class="group flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 transition-colors {
           isItemActive(item.href)
             ? 'text-primary'
-            : 'text-gray-500 hover:text-gray-700'
+            : 'text-sidebar-foreground/60 hover:text-sidebar-foreground'
         }"
       >
         <item.icon size={20} />
@@ -66,7 +66,7 @@
         class="group flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 transition-colors {
           isItemActive(item.href)
             ? 'text-primary'
-            : 'text-gray-500 hover:text-gray-700'
+            : 'text-sidebar-foreground/60 hover:text-sidebar-foreground'
         }"
       >
         <item.icon size={20} />
