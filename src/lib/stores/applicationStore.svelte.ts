@@ -20,6 +20,7 @@ function createApplicationStore() {
   )
 
   async function loadApplications() {
+    if (loading || applications.length > 0) return
     loading = true
     try {
       applications = await getApplications()
