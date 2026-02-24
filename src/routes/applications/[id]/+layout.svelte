@@ -2,8 +2,9 @@
   import { page } from '$app/state'
   import { onMount } from 'svelte'
   import IconRail from '$lib/components/layout/IconRail.svelte'
-  import ApplicationContextPanel from '$lib/components/layout/ApplicationContextPanel.svelte'
-  import CampaignContextPanel from '$lib/components/layout/CampaignContextPanel.svelte'
+  import AppContextSidebar from '$lib/components/layout/AppContextSidebar.svelte'
+  import CampaignContextSidebar from '$lib/components/layout/CampaignContextSidebar.svelte'
+  import * as Sidebar from '$lib/components/ui/sidebar/index.js'
   import { applicationStore } from '$lib/stores/applicationStore.svelte'
 
   let { children } = $props()
@@ -24,12 +25,12 @@
   })
 </script>
 
-<div class="grid h-screen grid-cols-[56px_220px_1fr]">
+<div class="grid h-screen grid-cols-[56px_1fr]">
   <IconRail {currentPath} />
 
-  <aside class="overflow-y-auto border-r border-border bg-card">
+  <Sidebar.Provider style="--sidebar-width: 220px;">
     {#if inCampaignDetail}
-      <CampaignContextPanel
+      <CampaignContextSidebar
         applicationId={appId}
         applicationName={applicationStore.selectedApplication?.name ?? ''}
         environment={applicationStore.selectedApplication?.environment ?? 'APPLICATION_ENVIRONMENT_SANDBOX'}
@@ -37,16 +38,18 @@
         {currentPath}
       />
     {:else}
-      <ApplicationContextPanel
+      <AppContextSidebar
         applicationId={appId}
         applicationName={applicationStore.selectedApplication?.name ?? ''}
         environment={applicationStore.selectedApplication?.environment ?? 'APPLICATION_ENVIRONMENT_SANDBOX'}
         {currentPath}
       />
     {/if}
-  </aside>
 
-  <main class="overflow-y-auto bg-background">
-    {@render children()}
-  </main>
+    <Sidebar.Inset>
+      <main class="overflow-y-auto h-full">
+        {@render children()}
+      </main>
+    </Sidebar.Inset>
+  </Sidebar.Provider>
 </div>
