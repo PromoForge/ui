@@ -365,6 +365,20 @@ export type ApplicationSettings = {
 };
 
 /**
+ * ArchiveAttributeRequest is the request for ArchiveAttribute.
+ */
+export type ArchiveAttributeRequest = {
+    attributeId?: number;
+};
+
+/**
+ * ArchiveAttributeResponse is the response for ArchiveAttribute.
+ */
+export type ArchiveAttributeResponse = {
+    attribute?: Attribute;
+};
+
+/**
  * ArchiveCampaignRequest is the request for ArchiveCampaign.
  */
 export type ArchiveCampaignRequest = {
@@ -398,6 +412,7 @@ export type Attribute = {
     subscribedCatalogsIds?: Array<number>;
     allowedSubscriptions?: Array<'ALLOWED_SUBSCRIPTION_UNSPECIFIED' | 'ALLOWED_SUBSCRIPTION_APPLICATION' | 'ALLOWED_SUBSCRIPTION_CATALOG'>;
     isBuiltin?: boolean;
+    archivedTime?: string;
 };
 
 /**
@@ -839,6 +854,7 @@ export type ConditionValue = {
     listValue?: StringList;
     datetimeValue?: string;
     rangeValue?: DoubleRange;
+    datetimeRangeValue?: DatetimeRange;
 };
 
 /**
@@ -2080,6 +2096,14 @@ export type CustomerSessionUpdate = {
 };
 
 /**
+ * DatetimeRange defines an inclusive timestamp range for the BETWEEN operator with datetime values.
+ */
+export type DatetimeRange = {
+    start?: string;
+    end?: string;
+};
+
+/**
  * DeactivateApplicationNotificationRequest deactivates a notification.
  */
 export type DeactivateApplicationNotificationRequest = {
@@ -2156,6 +2180,13 @@ export type DeleteApplicationNotificationResponse = {
  * DeleteApplicationResponse is the response for DeleteApplication.
  */
 export type DeleteApplicationResponse = {
+    [key: string]: unknown;
+};
+
+/**
+ * DeleteAttributeResponse is the response for DeleteAttribute.
+ */
+export type DeleteAttributeResponse = {
     [key: string]: unknown;
 };
 
@@ -4594,10 +4625,6 @@ export type UpdateApplicationRequest = {
      */
     caseSensitivity?: 'CASE_SENSITIVITY_UNSPECIFIED' | 'CASE_SENSITIVITY_SENSITIVE' | 'CASE_SENSITIVITY_INSENSITIVE_UPPERCASE' | 'CASE_SENSITIVITY_INSENSITIVE_LOWERCASE';
     /**
-     * The runtime environment of the application.
-     */
-    environment?: 'APPLICATION_ENVIRONMENT_UNSPECIFIED' | 'APPLICATION_ENVIRONMENT_SANDBOX' | 'APPLICATION_ENVIRONMENT_LIVE';
-    /**
      * Custom attributes for this application.
      */
     attributes?: {
@@ -4842,6 +4869,9 @@ export type UpdateCampaignRequest = {
     referralsEnabled?: boolean;
     updatedBy?: string;
     reevaluateOnReturn?: boolean;
+    attributes?: {
+        [key: string]: unknown;
+    };
 };
 
 /**
@@ -8955,6 +8985,10 @@ export type BackstageServiceListAttributesData = {
          * Optional filter by attribute type.
          */
         type?: 'ATTRIBUTE_TYPE_UNSPECIFIED' | 'ATTRIBUTE_TYPE_STRING' | 'ATTRIBUTE_TYPE_NUMBER' | 'ATTRIBUTE_TYPE_BOOLEAN' | 'ATTRIBUTE_TYPE_TIME' | 'ATTRIBUTE_TYPE_LOCATION' | 'ATTRIBUTE_TYPE_LIST_OF_STRINGS' | 'ATTRIBUTE_TYPE_LIST_OF_NUMBERS';
+        /**
+         * When true, include archived attributes in results. Default: exclude archived.
+         */
+        includeArchived?: boolean;
     };
     url: '/api/v1/attributes';
 };
@@ -9001,6 +9035,36 @@ export type BackstageServiceCreateAttributeResponses = {
 };
 
 export type BackstageServiceCreateAttributeResponse = BackstageServiceCreateAttributeResponses[keyof BackstageServiceCreateAttributeResponses];
+
+export type BackstageServiceDeleteAttributeData = {
+    body?: never;
+    path: {
+        /**
+         * The ID of the attribute to delete.
+         */
+        attributeId: number;
+    };
+    query?: never;
+    url: '/api/v1/attributes/{attributeId}';
+};
+
+export type BackstageServiceDeleteAttributeErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type BackstageServiceDeleteAttributeError = BackstageServiceDeleteAttributeErrors[keyof BackstageServiceDeleteAttributeErrors];
+
+export type BackstageServiceDeleteAttributeResponses = {
+    /**
+     * OK
+     */
+    200: DeleteAttributeResponse;
+};
+
+export type BackstageServiceDeleteAttributeResponse = BackstageServiceDeleteAttributeResponses[keyof BackstageServiceDeleteAttributeResponses];
 
 export type BackstageServiceGetAttributeData = {
     body?: never;
@@ -9091,6 +9155,33 @@ export type BackstageServiceImportAttributeAllowedListResponses = {
 };
 
 export type BackstageServiceImportAttributeAllowedListResponse = BackstageServiceImportAttributeAllowedListResponses[keyof BackstageServiceImportAttributeAllowedListResponses];
+
+export type BackstageServiceArchiveAttributeData = {
+    body: ArchiveAttributeRequest;
+    path: {
+        attributeId: number;
+    };
+    query?: never;
+    url: '/api/v1/attributes/{attributeId}/archive';
+};
+
+export type BackstageServiceArchiveAttributeErrors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type BackstageServiceArchiveAttributeError = BackstageServiceArchiveAttributeErrors[keyof BackstageServiceArchiveAttributeErrors];
+
+export type BackstageServiceArchiveAttributeResponses = {
+    /**
+     * OK
+     */
+    200: ArchiveAttributeResponse;
+};
+
+export type BackstageServiceArchiveAttributeResponse = BackstageServiceArchiveAttributeResponses[keyof BackstageServiceArchiveAttributeResponses];
 
 export type BackstageServiceListAudiencesData = {
     body?: never;
@@ -15216,6 +15307,10 @@ export type BackstageServiceListAttributes2Data = {
          * Optional filter by attribute type.
          */
         type?: 'ATTRIBUTE_TYPE_UNSPECIFIED' | 'ATTRIBUTE_TYPE_STRING' | 'ATTRIBUTE_TYPE_NUMBER' | 'ATTRIBUTE_TYPE_BOOLEAN' | 'ATTRIBUTE_TYPE_TIME' | 'ATTRIBUTE_TYPE_LOCATION' | 'ATTRIBUTE_TYPE_LIST_OF_STRINGS' | 'ATTRIBUTE_TYPE_LIST_OF_NUMBERS';
+        /**
+         * When true, include archived attributes in results. Default: exclude archived.
+         */
+        includeArchived?: boolean;
     };
     url: '/v1/attributes';
 };
@@ -15262,6 +15357,36 @@ export type BackstageServiceCreateAttribute2Responses = {
 };
 
 export type BackstageServiceCreateAttribute2Response = BackstageServiceCreateAttribute2Responses[keyof BackstageServiceCreateAttribute2Responses];
+
+export type BackstageServiceDeleteAttribute2Data = {
+    body?: never;
+    path: {
+        /**
+         * The ID of the attribute to delete.
+         */
+        attributeId: number;
+    };
+    query?: never;
+    url: '/v1/attributes/{attributeId}';
+};
+
+export type BackstageServiceDeleteAttribute2Errors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type BackstageServiceDeleteAttribute2Error = BackstageServiceDeleteAttribute2Errors[keyof BackstageServiceDeleteAttribute2Errors];
+
+export type BackstageServiceDeleteAttribute2Responses = {
+    /**
+     * OK
+     */
+    200: DeleteAttributeResponse;
+};
+
+export type BackstageServiceDeleteAttribute2Response = BackstageServiceDeleteAttribute2Responses[keyof BackstageServiceDeleteAttribute2Responses];
 
 export type BackstageServiceGetAttribute2Data = {
     body?: never;
@@ -15352,6 +15477,33 @@ export type BackstageServiceImportAttributeAllowedList2Responses = {
 };
 
 export type BackstageServiceImportAttributeAllowedList2Response = BackstageServiceImportAttributeAllowedList2Responses[keyof BackstageServiceImportAttributeAllowedList2Responses];
+
+export type BackstageServiceArchiveAttribute2Data = {
+    body: ArchiveAttributeRequest;
+    path: {
+        attributeId: number;
+    };
+    query?: never;
+    url: '/v1/attributes/{attributeId}/archive';
+};
+
+export type BackstageServiceArchiveAttribute2Errors = {
+    /**
+     * Default error response
+     */
+    default: Status;
+};
+
+export type BackstageServiceArchiveAttribute2Error = BackstageServiceArchiveAttribute2Errors[keyof BackstageServiceArchiveAttribute2Errors];
+
+export type BackstageServiceArchiveAttribute2Responses = {
+    /**
+     * OK
+     */
+    200: ArchiveAttributeResponse;
+};
+
+export type BackstageServiceArchiveAttribute2Response = BackstageServiceArchiveAttribute2Responses[keyof BackstageServiceArchiveAttribute2Responses];
 
 export type BackstageServiceListAudiences2Data = {
     body?: never;
