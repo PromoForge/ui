@@ -1,4 +1,4 @@
-.PHONY: dev build check preview gen-api update-api format clean
+.PHONY: dev build check preview gen-api update-api format clean test-e2e test-e2e-up test-e2e-down
 
 dev:
 	bun run dev
@@ -24,3 +24,16 @@ format:
 
 clean:
 	rm -rf build node_modules .svelte-kit
+
+# E2E tests
+test-e2e: test-e2e-up
+	cd e2e && bunx playwright test; \
+	status=$$?; \
+	$(MAKE) test-e2e-down; \
+	exit $$status
+
+test-e2e-up:
+	cd e2e && docker compose up --build -d --wait
+
+test-e2e-down:
+	cd e2e && docker compose down -v
