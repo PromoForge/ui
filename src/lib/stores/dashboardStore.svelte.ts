@@ -1,31 +1,37 @@
-import { getDashboardData } from '$lib/services/dashboardService'
-import type { DashboardData, TimeRange } from '$lib/types'
+import { getDashboardData } from "$lib/services/dashboardService";
+import type { DashboardData, TimeRange } from "$lib/types";
 
 function createDashboardStore() {
-  let data = $state<DashboardData | null>(null)
-  let timeRange = $state<TimeRange>('30d')
-  let loading = $state(false)
+  let data = $state<DashboardData | null>(null);
+  let timeRange = $state<TimeRange>("30d");
+  let loading = $state(false);
 
   async function loadDashboard(applicationId: string) {
-    loading = true
+    loading = true;
     try {
-      data = await getDashboardData(applicationId, timeRange)
+      data = await getDashboardData(applicationId, timeRange);
     } finally {
-      loading = false
+      loading = false;
     }
   }
 
   function setTimeRange(range: TimeRange) {
-    timeRange = range
+    timeRange = range;
   }
 
   return {
-    get data() { return data },
-    get timeRange() { return timeRange },
-    get loading() { return loading },
+    get data() {
+      return data;
+    },
+    get timeRange() {
+      return timeRange;
+    },
+    get loading() {
+      return loading;
+    },
     loadDashboard,
-    setTimeRange
-  }
+    setTimeRange,
+  };
 }
 
-export const dashboardStore = createDashboardStore()
+export const dashboardStore = createDashboardStore();

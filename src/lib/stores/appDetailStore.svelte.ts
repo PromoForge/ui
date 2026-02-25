@@ -1,49 +1,61 @@
-import { getAppDetailData } from '$lib/services/appDetailService'
-import type { AppDetailData, CampaignFilterStatus, TimeRange } from '$lib/types'
+import { getAppDetailData } from "$lib/services/appDetailService";
+import type {
+  AppDetailData,
+  CampaignFilterStatus,
+  TimeRange,
+} from "$lib/types";
 
 function createAppDetailStore() {
-  let data = $state<AppDetailData | null>(null)
-  let loading = $state(false)
-  let activeFilters = $state<Set<CampaignFilterStatus>>(new Set())
-  let timeRange = $state<TimeRange>('7d')
+  let data = $state<AppDetailData | null>(null);
+  let loading = $state(false);
+  let activeFilters = $state<Set<CampaignFilterStatus>>(new Set());
+  let timeRange = $state<TimeRange>("7d");
 
   async function loadAppDetail(appId: string) {
-    loading = true
+    loading = true;
     try {
-      data = await getAppDetailData(appId)
+      data = await getAppDetailData(appId);
     } finally {
-      loading = false
+      loading = false;
     }
   }
 
   function toggleFilter(status: CampaignFilterStatus) {
-    const next = new Set(activeFilters)
+    const next = new Set(activeFilters);
     if (next.has(status)) {
-      next.delete(status)
+      next.delete(status);
     } else {
-      next.add(status)
+      next.add(status);
     }
-    activeFilters = next
+    activeFilters = next;
   }
 
   function clearFilters() {
-    activeFilters = new Set()
+    activeFilters = new Set();
   }
 
   function setTimeRange(range: TimeRange) {
-    timeRange = range
+    timeRange = range;
   }
 
   return {
-    get data() { return data },
-    get loading() { return loading },
-    get activeFilters() { return activeFilters },
-    get timeRange() { return timeRange },
+    get data() {
+      return data;
+    },
+    get loading() {
+      return loading;
+    },
+    get activeFilters() {
+      return activeFilters;
+    },
+    get timeRange() {
+      return timeRange;
+    },
     loadAppDetail,
     toggleFilter,
     clearFilters,
-    setTimeRange
-  }
+    setTimeRange,
+  };
 }
 
-export const appDetailStore = createAppDetailStore()
+export const appDetailStore = createAppDetailStore();

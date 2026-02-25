@@ -3,70 +3,75 @@ import {
   backstageServiceCreateAttribute,
   backstageServiceUpdateAttribute,
   backstageServiceDeleteAttribute,
-  backstageServiceArchiveAttribute
-} from '$lib/api/generated'
+  backstageServiceArchiveAttribute,
+} from "$lib/api/generated";
 import type {
   Attribute,
   CreateAttributeRequest,
   UpdateAttributeRequest,
-  ArchiveAttributeRequest
-} from '$lib/api/generated/types.gen'
+  ArchiveAttributeRequest,
+} from "$lib/api/generated/types.gen";
 
-export async function listAttributes(): Promise<{ data: Attribute[]; total: number }> {
+export async function listAttributes(): Promise<{
+  data: Attribute[];
+  total: number;
+}> {
   const { data, error } = await backstageServiceListAttributes({
-    query: { pageSize: 1000 }
-  })
+    query: { pageSize: 1000 },
+  });
   if (error) {
-    throw new Error('Failed to load attributes')
+    throw new Error("Failed to load attributes");
   }
   return {
     data: data?.data ?? [],
-    total: data?.totalResultSize ?? 0
-  }
+    total: data?.totalResultSize ?? 0,
+  };
 }
 
-export async function createAttribute(request: CreateAttributeRequest): Promise<Attribute> {
+export async function createAttribute(
+  request: CreateAttributeRequest,
+): Promise<Attribute> {
   const { data, error } = await backstageServiceCreateAttribute({
-    body: request
-  })
+    body: request,
+  });
   if (error) {
-    throw new Error('Failed to create attribute')
+    throw new Error("Failed to create attribute");
   }
-  return data!.attribute!
+  return data!.attribute!;
 }
 
 export async function updateAttribute(
   attributeId: number,
-  request: Omit<UpdateAttributeRequest, 'attributeId'>
+  request: Omit<UpdateAttributeRequest, "attributeId">,
 ): Promise<Attribute> {
   const { data, error } = await backstageServiceUpdateAttribute({
     path: { attributeId },
-    body: { ...request, attributeId }
-  })
+    body: { ...request, attributeId },
+  });
   if (error) {
-    throw new Error('Failed to update attribute')
+    throw new Error("Failed to update attribute");
   }
-  return data!.attribute!
+  return data!.attribute!;
 }
 
 export async function deleteAttribute(attributeId: number): Promise<void> {
   const { error } = await backstageServiceDeleteAttribute({
-    path: { attributeId }
-  })
+    path: { attributeId },
+  });
   if (error) {
-    throw new Error('Failed to delete attribute')
+    throw new Error("Failed to delete attribute");
   }
 }
 
 export async function archiveAttribute(
   attributeId: number,
-  request: ArchiveAttributeRequest
+  request: ArchiveAttributeRequest,
 ): Promise<void> {
   const { error } = await backstageServiceArchiveAttribute({
     path: { attributeId },
-    body: request
-  })
+    body: request,
+  });
   if (error) {
-    throw new Error('Failed to archive attribute')
+    throw new Error("Failed to archive attribute");
   }
 }

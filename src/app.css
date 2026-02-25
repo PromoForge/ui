@@ -13,41 +13,41 @@
   --radius: 0.625rem;
 
   /* shadcn core colors (--color-* prefix required for TW v4 utilities) */
-  --color-background: #FAFAF9;
-  --color-foreground: #18181B;
-  --color-card: #FFFFFF;
-  --color-card-foreground: #18181B;
-  --color-popover: #FFFFFF;
-  --color-popover-foreground: #18181B;
-  --color-primary: #2563EB;
-  --color-primary-foreground: #FFFFFF;
-  --color-secondary: #F4F4F5;
-  --color-secondary-foreground: #18181B;
-  --color-muted: #F4F4F5;
-  --color-muted-foreground: #71717A;
-  --color-accent: #F4F4F5;
-  --color-accent-foreground: #18181B;
-  --color-destructive: #DC2626;
-  --color-destructive-foreground: #FFFFFF;
-  --color-border: #E8E8E6;
-  --color-input: #E8E8E6;
-  --color-ring: #2563EB;
+  --color-background: #fafaf9;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #18181b;
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-accent: #f4f4f5;
+  --color-accent-foreground: #18181b;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e8e8e6;
+  --color-input: #e8e8e6;
+  --color-ring: #2563eb;
 
   /* Sidebar colors */
-  --color-sidebar: #FAFAF9;
-  --color-sidebar-foreground: #18181B;
-  --color-sidebar-primary: #2563EB;
-  --color-sidebar-primary-foreground: #FFFFFF;
-  --color-sidebar-accent: #F4F4F5;
-  --color-sidebar-accent-foreground: #18181B;
-  --color-sidebar-border: #E8E8E6;
-  --color-sidebar-ring: #2563EB;
+  --color-sidebar: #fafaf9;
+  --color-sidebar-foreground: #18181b;
+  --color-sidebar-primary: #2563eb;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #f4f4f5;
+  --color-sidebar-accent-foreground: #18181b;
+  --color-sidebar-border: #e8e8e6;
+  --color-sidebar-ring: #2563eb;
 
   /* Custom app tokens */
-  --color-sandbox: #6366F1;
-  --color-success: #16A34A;
-  --color-warning: #CA8A04;
-  --color-coral: #F87171;
+  --color-sandbox: #6366f1;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-coral: #f87171;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 

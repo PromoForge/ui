@@ -1,3 +1,3 @@
-import type { Application } from '$lib/api/generated/types.gen'
+import type { Application } from "$lib/api/generated/types.gen";
 
-export type Environment = NonNullable<Application['environment']>
+export type Environment = NonNullable<Application["environment"]>;

@@ -1,45 +1,46 @@
-import { getCampaignDetail } from '$lib/services/campaignDetailService'
-import type { CampaignDetail } from '$lib/types'
+import { getCampaignDetail } from "$lib/services/campaignDetailService";
+import type { CampaignDetail } from "$lib/types";
 
 function createCampaignDetailStore() {
-  let campaign = $state<CampaignDetail | null>(null)
-  let loading = $state(false)
+  let campaign = $state<CampaignDetail | null>(null);
+  let loading = $state(false);
 
   const hasSchedule = $derived(
-    campaign?.schedule.startDate !== null || campaign?.schedule.endDate !== null
-  )
+    campaign?.schedule.startDate !== null ||
+      campaign?.schedule.endDate !== null,
+  );
 
-  const isRunning = $derived(campaign?.status === 'running')
+  const isRunning = $derived(campaign?.status === "running");
 
   async function loadCampaign(campaignId: string) {
-    loading = true
+    loading = true;
     try {
-      campaign = await getCampaignDetail(campaignId)
+      campaign = await getCampaignDetail(campaignId);
     } finally {
-      loading = false
+      loading = false;
     }
   }
 
   function clear() {
-    campaign = null
+    campaign = null;
   }
 
   return {
     get campaign() {
-      return campaign
+      return campaign;
     },
     get loading() {
-      return loading
+      return loading;
     },
     get hasSchedule() {
-      return hasSchedule
+      return hasSchedule;
     },
     get isRunning() {
-      return isRunning
+      return isRunning;
     },
     loadCampaign,
-    clear
-  }
+    clear,
+  };
 }
 
-export const campaignDetailStore = createCampaignDetailStore()
+export const campaignDetailStore = createCampaignDetailStore();

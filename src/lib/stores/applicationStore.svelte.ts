@@ -1,68 +1,94 @@
-import { getApplications, updateApplication as updateApplicationApi, updateApplicationSettings as updateApplicationSettingsApi } from '$lib/services/applicationService'
-import type { Application, UpdateApplicationRequest, UpdateApplicationSettingsRequest } from '$lib/api/generated/types.gen'
+import {
+  getApplications,
+  updateApplication as updateApplicationApi,
+  updateApplicationSettings as updateApplicationSettingsApi,
+} from "$lib/services/applicationService";
+import type {
+  Application,
+  UpdateApplicationRequest,
+  UpdateApplicationSettingsRequest,
+} from "$lib/api/generated/types.gen";
 
 function createApplicationStore() {
-  let applications = $state<Application[]>([])
-  let selectedId = $state<string | null>(null)
-  let searchQuery = $state('')
-  let loading = $state(false)
+  let applications = $state<Application[]>([]);
+  let selectedId = $state<string | null>(null);
+  let searchQuery = $state("");
+  let loading = $state(false);
 
   const selectedApplication = $derived(
-    applications.find((a) => String(a.id) === selectedId) ?? null
-  )
+    applications.find((a) => String(a.id) === selectedId) ?? null,
+  );
 
   const filteredApplications = $derived(
     searchQuery
       ? applications.filter((a) =>
-          (a.name ?? '').toLowerCase().includes(searchQuery.toLowerCase())
+          (a.name ?? "").toLowerCase().includes(searchQuery.toLowerCase()),
         )
-      : applications
-  )
+      : applications,
+  );
 
   async function loadApplications() {
-    if (loading || applications.length > 0) return
-    loading = true
+    if (loading || applications.length > 0) return;
+    loading = true;
     try {
-      applications = await getApplications()
+      applications = await getApplications();
       if (applications.length > 0 && !selectedId) {
-        selectedId = String(applications[0].id)
+        selectedId = String(applications[0].id);
       }
     } finally {
-      loading = false
+      loading = false;
     }
   }
 
   function selectApplication(id: string) {
-    selectedId = id
+    selectedId = id;
   }
 
   function setSearchQuery(query: string) {
-    searchQuery = query
+    searchQuery = query;
   }
 
-  async function updateApplication(id: number, request: UpdateApplicationRequest): Promise<void> {
-    const updated = await updateApplicationApi(id, request)
-    applications = applications.map((a) => (a.id === updated.id ? updated : a))
+  async function updateApplication(
+    id: number,
+    request: UpdateApplicationRequest,
+  ): Promise<void> {
+    const updated = await updateApplicationApi(id, request);
+    applications = applications.map((a) => (a.id === updated.id ? updated : a));
   }
 
-  async function updateApplicationSettings(id: number, request: Omit<UpdateApplicationSettingsRequest, 'applicationId'>): Promise<void> {
-    const updated = await updateApplicationSettingsApi(id, request)
-    applications = applications.map((a) => (a.id === updated.id ? updated : a))
+  async function updateApplicationSettings(
+    id: number,
+    request: Omit<UpdateApplicationSettingsRequest, "applicationId">,
+  ): Promise<void> {
+    const updated = await updateApplicationSettingsApi(id, request);
+    applications = applications.map((a) => (a.id === updated.id ? updated : a));
   }
 
   return {
-    get applications() { return applications },
-    get selectedId() { return selectedId },
-    get selectedApplication() { return selectedApplication },
-    get filteredApplications() { return filteredApplications },
-    get searchQuery() { return searchQuery },
-    get loading() { return loading },
+    get applications() {
+      return applications;
+    },
+    get selectedId() {
+      return selectedId;
+    },
+    get selectedApplication() {
+      return selectedApplication;
+    },
+    get filteredApplications() {
+      return filteredApplications;
+    },
+    get searchQuery() {
+      return searchQuery;
+    },
+    get loading() {
+      return loading;
+    },
     loadApplications,
     selectApplication,
     setSearchQuery,
     updateApplication,
-    updateApplicationSettings
-  }
+    updateApplicationSettings,
+  };
 }
 
-export const applicationStore = createApplicationStore()
+export const applicationStore = createApplicationStore();
