@@ -2,13 +2,20 @@ import { saveTestState } from "./test-state";
 
 const API_URL = "http://localhost:7243";
 
-async function apiPost(path: string, body: Record<string, unknown>) {
+async function apiPost(
+  path: string,
+  body: Record<string, unknown>,
+  ignoreConflict = false
+) {
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
+    if (ignoreConflict && res.status === 409) {
+      return null;
+    }
     const text = await res.text();
     throw new Error(`POST ${path} failed (${res.status}): ${text}`);
   }
@@ -73,18 +80,24 @@ export default async function globalSetup() {
       title: "Event Tags",
       type: "ATTRIBUTE_TYPE_LIST_OF_STRINGS",
       description: "Tags associated with the event",
+      eventType: "EVENT_TYPE_CUSTOM",
     },
   ];
 
   const attributeIds: number[] = [];
   for (const config of attributeConfigs) {
-    const attrRes = await apiPost("/api/v1/attributes", {
-      ...config,
-      subscribedApplicationsIds: [app.id],
-    });
-    const attr = attrRes.attribute;
-    attributeIds.push(attr.id);
-    console.log(`Created attribute: ${attr.title} (id=${attr.id})`);
+    const attrRes = await apiPost(
+      "/api/v1/attributes",
+      { ...config, subscribedApplicationsIds: [app.id] },
+      true // ignore 409 — attribute may exist from a previous run
+    );
+    if (attrRes) {
+      const attr = attrRes.attribute;
+      attributeIds.push(attr.id);
+      console.log(`Created attribute: ${attr.title} (id=${attr.id})`);
+    } else {
+      console.log(`Attribute ${config.title} already exists, skipping`);
+    }
   }
 
   saveTestState({

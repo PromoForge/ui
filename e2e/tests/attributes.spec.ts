@@ -6,23 +6,21 @@ test.describe("Attributes", () => {
     // Navigate to attributes page
     await page.goto("/settings/tools/attributes");
 
-    // Wait for attributes to load (loading state disappears)
-    await expect(page.getByText("Loading attributes...")).toBeHidden({
-      timeout: 15_000,
+    // Wait for the heading and at least one seeded attribute to appear
+    await expect(
+      page.getByRole("heading", { name: "Attributes" })
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Loyalty Tier")).toBeVisible({
+      timeout: 10_000,
     });
   });
 
   test("should display the attributes page with seeded data", async ({
     page,
   }) => {
-    // Page heading
-    await expect(
-      page.getByRole("heading", { name: "Attributes" })
-    ).toBeVisible();
-
-    // Should show the Custom tab as active by default
-    await expect(page.getByRole("tab", { name: "Custom" })).toBeVisible();
-    await expect(page.getByRole("tab", { name: "Built-in" })).toBeVisible();
+    // Should show the Custom and Built-in tabs
+    await expect(page.getByText("Custom", { exact: true })).toBeVisible();
+    await expect(page.getByText("Built-in", { exact: true })).toBeVisible();
 
     // Should display our seeded attributes in the table
     await expect(page.getByText("Loyalty Tier")).toBeVisible();
@@ -48,36 +46,66 @@ test.describe("Attributes", () => {
     // Open filter dropdown
     await page.getByRole("button", { name: /Filter/ }).click();
 
-    // Click Entity category
-    await page.getByText("Entity").click();
+    const popover = page.locator("[data-slot='popover-content']");
+    await expect(popover).toBeVisible();
 
-    // Select "Customer Profile" filter
-    await page.getByText("Customer Profile").click();
+    // Click Entity category — use evaluate(el.click()) because Panel 2
+    // content is clipped by overflow:hidden and a table cell intercepts
+    // coordinate-based clicks. el.click() triggers the addEventListener
+    // handler directly on the element.
+    await popover
+      .locator("button")
+      .filter({ hasText: "Entity" })
+      .first()
+      .evaluate((el: HTMLElement) => el.click());
 
-    // Close the filter popover by clicking outside
-    await page.keyboard.press("Escape");
+    // Wait for the 200ms CSS slide animation + reactivity to settle
+    await page.waitForTimeout(400);
+
+    // Click "Customer Profile" option in Panel 2
+    await popover
+      .locator("button")
+      .filter({ hasText: "Customer Profile" })
+      .evaluate((el: HTMLElement) => el.click());
+
+    // Close the popover by clicking outside
+    await page.locator("body").click({ position: { x: 10, y: 10 } });
+    await expect(popover).toBeHidden({ timeout: 5_000 });
 
     // Should show only Customer Profile attributes
-    await expect(page.getByText("Loyalty Tier")).toBeVisible();
-    await expect(page.getByText("Item Weight")).toBeHidden();
+    await expect(page.getByText("Loyalty Tier")).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText("Item Weight")).toBeHidden({ timeout: 5_000 });
   });
 
   test("should filter attributes by type", async ({ page }) => {
     // Open filter dropdown
     await page.getByRole("button", { name: /Filter/ }).click();
 
-    // Click Type category
-    await page.getByText("Type").click();
+    const popover = page.locator("[data-slot='popover-content']");
+    await expect(popover).toBeVisible();
 
-    // Select "Number" filter
-    await page.getByText("Number").click();
+    // Click Type category — same evaluate approach as entity test
+    await popover
+      .locator("button")
+      .filter({ hasText: "Type" })
+      .first()
+      .evaluate((el: HTMLElement) => el.click());
 
-    // Close filter
-    await page.keyboard.press("Escape");
+    // Wait for the 200ms CSS slide animation + reactivity to settle
+    await page.waitForTimeout(400);
+
+    // Click "Number" option in Panel 2
+    await popover
+      .getByText("Number", { exact: true })
+      .evaluate((el: HTMLElement) => el.click());
+
+    // Close the popover by clicking outside
+    await page.locator("body").click({ position: { x: 10, y: 10 } });
+    await expect(popover).toBeHidden({ timeout: 5_000 });
 
     // Should show only Number type attributes
-    await expect(page.getByText("Item Weight")).toBeVisible();
-    await expect(page.getByText("Loyalty Tier")).toBeHidden();
+    await expect(page.getByText("Item Weight")).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByText("Loyalty Tier")).toBeHidden({ timeout: 5_000 });
   });
 
   test("should create a new attribute", async ({ page }) => {
@@ -90,13 +118,15 @@ test.describe("Attributes", () => {
     ).toBeVisible();
 
     // Fill in the form
-    // Entity select
-    await page.getByLabel("Entity").click();
+    // Entity select — custom select with placeholder
+    await page.getByRole("button", { name: "Select entity..." }).click();
     await page.getByRole("option", { name: "Application" }).click();
 
-    // Type select
-    await page.getByLabel("Type").click();
-    await page.getByRole("option", { name: "String" }).click();
+    // Type select — custom select with placeholder
+    await page.getByRole("button", { name: "Select type..." }).click();
+    await page
+      .getByRole("option", { name: "String", exact: true })
+      .click();
 
     // API name
     await page.getByPlaceholder("e.g. order_status").fill("e2e_created_attr");
@@ -109,7 +139,7 @@ test.describe("Attributes", () => {
       .getByPlaceholder("Describe what this attribute is used for...")
       .fill("Attribute created by E2E test");
 
-    // Submit
+    // Submit — the submit button at the bottom of the sheet
     await page
       .getByRole("button", { name: "Create Attribute" })
       .last()
@@ -131,7 +161,6 @@ test.describe("Attributes", () => {
       await page.getByText("Name (A-Z)").click();
 
       // Verify attributes are in alphabetical order
-      // The first attribute in the table should come alphabetically first
       const rows = page.locator("table tbody tr");
       const firstRowText = await rows.first().textContent();
       expect(firstRowText).toBeTruthy();

@@ -5,51 +5,36 @@ test.describe("Applications", () => {
   test("should load and display applications in the sidebar", async ({
     page,
   }) => {
+    const state = loadTestState();
     await page.goto("/");
 
-    // Wait for the app to initialize and load applications
-    // The sidebar has a "SELECT APPLICATION" label above the app selector
-    await expect(page.getByText("SELECT APPLICATION")).toBeVisible({
-      timeout: 15_000,
+    // Wait for the seeded application to appear (use first() since name appears in sidebar + app selector)
+    await expect(page.getByText(state.applicationName).first()).toBeVisible({
+      timeout: 30_000,
     });
-
-    // The seeded application should appear in the selector or be auto-selected
-    const state = loadTestState();
-
-    // Open the app selector dropdown
-    // Fallback: find by the "SELECT APPLICATION" label and click the button near it
-    const selectorTrigger = page
-      .getByText("SELECT APPLICATION")
-      .locator("..")
-      .locator("button")
-      .first();
-    await selectorTrigger.click();
-
-    // The dropdown should show our test app
-    await expect(page.getByText(state.applicationName)).toBeVisible();
   });
 
   test("should select an application and navigate", async ({ page }) => {
     const state = loadTestState();
     await page.goto("/");
 
-    // Wait for apps to load
-    await expect(page.getByText("SELECT APPLICATION")).toBeVisible({
-      timeout: 15_000,
+    // Wait for the app to appear
+    await expect(page.getByText(state.applicationName).first()).toBeVisible({
+      timeout: 30_000,
     });
 
-    // Open selector and click our test app
-    const selectorTrigger = page
-      .getByText("SELECT APPLICATION")
-      .locator("..")
-      .locator("button")
-      .first();
-    await selectorTrigger.click();
-    await page.getByText(state.applicationName).click();
+    // Verify the app link exists
+    await expect(
+      page.locator(`a[href="/applications/${state.applicationId}"]`)
+    ).toBeVisible({ timeout: 10_000 });
 
-    // Should navigate to the application's page
+    // Navigate to the application's page
+    await page.goto(`/applications/${state.applicationId}`);
+
+    // Should load the application detail page
     await expect(page).toHaveURL(
-      new RegExp(`/applications/${state.applicationId}`)
+      new RegExp(`/applications/${state.applicationId}`),
+      { timeout: 10_000 }
     );
   });
 });

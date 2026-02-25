@@ -32,6 +32,23 @@
     }
   })
 
+  // Svelte 5 event delegation doesn't fire for content rendered inside
+  // Bits UI portals (mounted outside the component tree). Attach click
+  // listeners directly on the element so they work reliably.
+  function handleClick(node: HTMLElement, handler: () => void) {
+    let fn = handler
+    const listener = () => fn()
+    node.addEventListener('click', listener)
+    return {
+      update(newHandler: () => void) {
+        fn = newHandler
+      },
+      destroy() {
+        node.removeEventListener('click', listener)
+      }
+    }
+  }
+
   const categories: { key: keyof FilterState; label: string }[] = [
     { key: 'entity', label: 'Entity' },
     { key: 'type', label: 'Type' },
@@ -81,7 +98,7 @@
           {#each categories as cat (cat.key)}
             <button
               class="flex w-full items-center justify-between px-3 py-2.5 text-sm hover:bg-slate-50 cursor-pointer"
-              onclick={() => (activeCategory = cat.key)}
+              use:handleClick={() => (activeCategory = cat.key)}
             >
               <span>{cat.label}</span>
               <div class="flex items-center gap-1">
@@ -99,7 +116,7 @@
           <div class="flex items-center gap-2 px-3 py-2.5 border-b">
             <button
               class="p-0.5 rounded hover:bg-slate-100 cursor-pointer"
-              onclick={() => (activeCategory = null)}
+              use:handleClick={() => (activeCategory = null)}
             >
               <ArrowLeft size={14} />
             </button>
@@ -113,7 +130,7 @@
               <button
                 class="flex w-full items-center gap-2.5 px-3 py-2 text-sm cursor-pointer transition-colors
                   {checked ? 'bg-indigo-50' : 'hover:bg-slate-50'}"
-                onclick={() => onToggle(lastCategory, option.value)}
+                use:handleClick={() => onToggle(lastCategory, option.value)}
               >
                 <Checkbox
                   {checked}
