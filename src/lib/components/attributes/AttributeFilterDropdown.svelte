@@ -16,6 +16,14 @@
 
   let open = $state(false)
   let activeCategory = $state<keyof FilterState | null>(null)
+  let lastCategory = $state<keyof FilterState>('entity')
+
+  // Update lastCategory when activeCategory changes to non-null
+  $effect(() => {
+    if (activeCategory) {
+      lastCategory = activeCategory
+    }
+  })
 
   // Reset to category list when closing
   $effect(() => {
@@ -88,35 +96,33 @@
 
         <!-- Level 2: Options list -->
         <div class="w-1/2">
-          {#if activeCategory}
-            <div class="flex items-center gap-2 px-3 py-2.5 border-b">
+          <div class="flex items-center gap-2 px-3 py-2.5 border-b">
+            <button
+              class="p-0.5 rounded hover:bg-slate-100 cursor-pointer"
+              onclick={() => (activeCategory = null)}
+            >
+              <ArrowLeft size={14} />
+            </button>
+            <span class="text-sm font-medium">
+              {categories.find((c) => c.key === lastCategory)?.label}
+            </span>
+          </div>
+          <div class="max-h-64 overflow-y-auto py-1">
+            {#each getOptionsForCategory(lastCategory) as option (option.value)}
+              {@const checked = filters[lastCategory].has(option.value)}
               <button
-                class="p-0.5 rounded hover:bg-slate-100"
-                onclick={() => (activeCategory = null)}
+                class="flex w-full items-center gap-2.5 px-3 py-2 text-sm cursor-pointer transition-colors
+                  {checked ? 'bg-indigo-50' : 'hover:bg-slate-50'}"
+                onclick={() => onToggle(lastCategory, option.value)}
               >
-                <ArrowLeft size={14} />
+                <Checkbox
+                  {checked}
+                  class="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                />
+                <span>{option.label}</span>
               </button>
-              <span class="text-sm font-medium">
-                {categories.find((c) => c.key === activeCategory)?.label}
-              </span>
-            </div>
-            <div class="max-h-64 overflow-y-auto py-1">
-              {#each getOptionsForCategory(activeCategory) as option (option.value)}
-                {@const checked = filters[activeCategory].has(option.value)}
-                <button
-                  class="flex w-full items-center gap-2.5 px-3 py-2 text-sm cursor-pointer transition-colors
-                    {checked ? 'bg-indigo-50' : 'hover:bg-slate-50'}"
-                  onclick={() => activeCategory && onToggle(activeCategory, option.value)}
-                >
-                  <Checkbox
-                    {checked}
-                    class="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                  />
-                  <span>{option.label}</span>
-                </button>
-              {/each}
-            </div>
-          {/if}
+            {/each}
+          </div>
         </div>
       </div>
     </div>
