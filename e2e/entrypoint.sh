@@ -17,9 +17,9 @@ sed -i 's|broadcastAddress: "127.0.0.1"|broadcastAddress: "0.0.0.0"|g' "$CONFIG"
 sed -i 's|listenAddress: "127.0.0.1:8000"|listenAddress: "0.0.0.0:8000"|g' "$CONFIG"
 
 echo "Installing schema..."
-promoforge-sql-tool -u promoforge --pw promoforge -h postgres -p 5432 --pl postgres18 --db promoforge create || true
-promoforge-sql-tool -u promoforge --pw promoforge -h postgres -p 5432 --pl postgres18 --db promoforge setup -v 0.0
-promoforge-sql-tool -u promoforge --pw promoforge -h postgres -p 5432 --pl postgres18 --db promoforge update-schema -d /etc/promoforge/schema/postgresql/v18/promoforge/versioned
+promoforge-sql-tool -u promoforge --pw promoforge --ep postgres -p 5432 --pl postgres18 --db promoforge create || true
+promoforge-sql-tool -u promoforge --pw promoforge --ep postgres -p 5432 --pl postgres18 --db promoforge setup -v 0.0
+promoforge-sql-tool -u promoforge --pw promoforge --ep postgres -p 5432 --pl postgres18 --db promoforge update-schema -d /etc/promoforge/schema/postgresql/v18/promoforge/versioned
 echo "Schema installed."
 
 echo "Starting promoforge server..."

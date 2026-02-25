@@ -16,13 +16,15 @@
 
   let open = $state(false)
   let activeCategory = $state<keyof FilterState | null>(null)
-  let lastCategory = $state<keyof FilterState>('entity')
+  let prevCategory = $state<keyof FilterState>('entity')
 
-  // Update lastCategory when activeCategory changes to non-null
-  $effect(() => {
+  // Track the last non-null category synchronously
+  const displayCategory = $derived.by(() => {
     if (activeCategory) {
-      lastCategory = activeCategory
+      prevCategory = activeCategory
+      return activeCategory
     }
+    return prevCategory
   })
 
   // Reset to category list when closing
@@ -121,16 +123,16 @@
               <ArrowLeft size={14} />
             </button>
             <span class="text-sm font-medium">
-              {categories.find((c) => c.key === lastCategory)?.label}
+              {categories.find((c) => c.key === displayCategory)?.label}
             </span>
           </div>
           <div class="max-h-64 overflow-y-auto py-1">
-            {#each getOptionsForCategory(lastCategory) as option (option.value)}
-              {@const checked = filters[lastCategory].has(option.value)}
+            {#each getOptionsForCategory(displayCategory) as option (option.value)}
+              {@const checked = filters[displayCategory].has(option.value)}
               <button
                 class="flex w-full items-center gap-2.5 px-3 py-2 text-sm cursor-pointer transition-colors
                   {checked ? 'bg-indigo-50' : 'hover:bg-slate-50'}"
-                use:handleClick={() => onToggle(lastCategory, option.value)}
+                use:handleClick={() => onToggle(displayCategory, option.value)}
               >
                 <Checkbox
                   {checked}

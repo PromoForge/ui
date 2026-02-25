@@ -17,4 +17,5 @@ COPY --from=builder /src/config /etc/promoforge/config
 COPY --from=builder /src/schema /etc/promoforge/schema
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+WORKDIR /etc/promoforge
 ENTRYPOINT ["/entrypoint.sh"]

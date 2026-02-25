@@ -26,8 +26,8 @@ clean:
 	rm -rf build node_modules .svelte-kit
 
 # E2E tests
-test-e2e: test-e2e-up
-	cd e2e && bunx playwright test; \
+test-e2e: test-e2e-down test-e2e-up
+	bunx playwright test --config e2e/playwright.config.ts; \
 	status=$$?; \
 	$(MAKE) test-e2e-down; \
 	exit $$status
