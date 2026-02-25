@@ -97,7 +97,6 @@
     {:else}
       <AttributeTable
         attributes={attributeStore.paginatedAttributes}
-        onToggleVisibility={(attr) => attributeStore.toggleVisibility(attr)}
       />
     {/if}
   </div>

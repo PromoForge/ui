@@ -3,13 +3,12 @@
   import { ENTITY_LABELS, TYPE_LABELS } from '$lib/stores/attributeStore.svelte'
   import * as Table from '$lib/components/ui/table/index.js'
   import { Switch } from '$lib/components/ui/switch/index.js'
+  import * as Tooltip from '$lib/components/ui/tooltip/index.js'
 
   let {
-    attributes,
-    onToggleVisibility
+    attributes
   }: {
     attributes: Attribute[]
-    onToggleVisibility: (attr: Attribute) => void
   } = $props()
 
   const BADGE_COLORS = [
@@ -76,10 +75,17 @@
           {TYPE_LABELS[attr.type ?? ''] ?? attr.type ?? '—'}
         </Table.Cell>
         <Table.Cell class="text-right">
-          <Switch
-            checked={attr.editable ?? false}
-            onCheckedChange={() => onToggleVisibility(attr)}
-          />
+          <Tooltip.Root>
+            <Tooltip.Trigger>
+              <Switch
+                checked={attr.editable ?? false}
+                disabled
+              />
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              <p>Coming soon</p>
+            </Tooltip.Content>
+          </Tooltip.Root>
         </Table.Cell>
       </Table.Row>
     {/each}
