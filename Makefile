@@ -38,7 +38,7 @@ test-e2e: test-e2e-down test-e2e-up
 	exit $$status
 
 test-e2e-up:
-	cd e2e && docker compose up --build -d --wait
+	cd e2e && GITHUB_TOKEN=$$(gh auth token) docker compose up --build -d --wait
 
 test-e2e-down:
 	cd e2e && docker compose down -v
