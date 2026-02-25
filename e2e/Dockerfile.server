@@ -1,5 +1,6 @@
 FROM golang:1.24 AS builder
-RUN git clone --depth 1 https://github.com/PromoForge/promoforge.git /src
+ARG GITHUB_TOKEN
+RUN git clone --depth 1 https://x-access-token:${GITHUB_TOKEN}@github.com/PromoForge/promoforge.git /src
 WORKDIR /src
 RUN make promoforge-server promoforge-sql-tool
 

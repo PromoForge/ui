@@ -18,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.server
+      args:
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
     depends_on:
       postgres:
         condition: service_healthy
