@@ -1,4 +1,4 @@
-.PHONY: dev build check preview gen-api update-api format clean test-e2e test-e2e-up test-e2e-down
+.PHONY: dev build check preview gen-api update-api format clean run test-e2e test-e2e-up test-e2e-down
 
 dev:
 	bun run dev
@@ -24,6 +24,11 @@ format:
 
 clean:
 	rm -rf build node_modules .svelte-kit
+
+# Run app with isolated server
+run: test-e2e-down test-e2e-up
+	bun run dev; \
+	$(MAKE) test-e2e-down
 
 # E2E tests
 test-e2e: test-e2e-down test-e2e-up

@@ -11,6 +11,7 @@ Promotion engine frontend built with SvelteKit 2, Svelte 5, Tailwind CSS v4, and
 - `make update-api` — Pull latest api submodule and regenerate SDK
 - `make format` — Run prettier on src/
 - `make clean` — Remove build artifacts
+- `make test-e2e` — Run Playwright E2E tests (requires Docker; tears down, rebuilds, seeds, runs, cleans up)
 
 ## Environment Variables
 
@@ -104,3 +105,13 @@ App-specific components that build on shadcn primitives:
 - **Language:** TypeScript
 - **Build:** Vite, `@sveltejs/adapter-static` (SPA mode with `index.html` fallback)
 - **Package manager:** bun
+
+## E2E Tests (Playwright)
+
+- Config: `e2e/playwright.config.ts` — runs dev server on port 5174, seeds via `e2e/global-setup.ts`
+- Infrastructure: `e2e/docker-compose.yml` — builds PromoForge server from GitHub, runs Postgres
+- Tests: `e2e/tests/` — Chromium-only, serial (`workers: 1`), no mocks (hits real API)
+- Test state: `e2e/global-setup.ts` seeds data via API, `e2e/test-state.ts` shares IDs across tests
+
+### Svelte 5 + Bits UI portal gotcha
+Svelte 5 `onclick={...}` on plain elements inside Bits UI portals (Popover, Sheet, Dialog) **does not fire** — Svelte's event delegation doesn't reach portaled content. Bits UI's own components (Select.Item, etc.) work because they use internal state machines. Fix: use a Svelte action with `addEventListener` (see `handleClick` in `AttributeFilterDropdown.svelte`). In Playwright tests, use `evaluate((el) => el.click())` to bypass CSS overflow coordinate interception.
