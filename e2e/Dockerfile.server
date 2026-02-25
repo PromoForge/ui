@@ -1,0 +1,16 @@
+FROM golang:1.24 AS builder
+RUN git clone --depth 1 https://github.com/PromoForge/promoforge.git /src
+WORKDIR /src
+RUN make promoforge-server promoforge-sql-tool
+
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /src/promoforge-server /usr/local/bin/
+COPY --from=builder /src/promoforge-sql-tool /usr/local/bin/
+COPY --from=builder /src/config /etc/promoforge/config
+COPY --from=builder /src/schema /etc/promoforge/schema
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
