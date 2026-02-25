@@ -33,7 +33,8 @@
   let apiName = $state('')
   let name = $state('')
   let description = $state('')
-  let selectedAppId = $state('all')
+  let selectedAppIds = $state<number[]>([])
+  let appDropdownOpen = $state(false)
   let submitting = $state(false)
   let attempted = $state(false)
   let apiNameManuallyEdited = $state(false)
@@ -135,6 +136,18 @@
     URL.revokeObjectURL(url)
   }
 
+  function toggleApp(appId: number) {
+    if (selectedAppIds.includes(appId)) {
+      selectedAppIds = selectedAppIds.filter((id) => id !== appId)
+    } else {
+      selectedAppIds = [...selectedAppIds, appId]
+    }
+  }
+
+  function removeApp(appId: number) {
+    selectedAppIds = selectedAppIds.filter((id) => id !== appId)
+  }
+
   // Clear picklist when type changes
   $effect(() => {
     // Read `type` to track it
@@ -176,7 +189,8 @@
     tagInputValue = ''
     allowCustomValues = false
     csvFileName = ''
-    selectedAppId = 'all'
+    selectedAppIds = []
+    appDropdownOpen = false
     submitting = false
     attempted = false
     apiNameManuallyEdited = false
@@ -198,7 +212,7 @@
 
     submitting = true
     try {
-      const subscribedApplicationsIds = selectedAppId !== 'all' ? [Number(selectedAppId)] : undefined
+      const subscribedApplicationsIds = selectedAppIds.length > 0 ? selectedAppIds : undefined
       await onSubmit({
         entity: entity as CreateAttributeRequest['entity'],
         type: type as CreateAttributeRequest['type'],
@@ -490,19 +504,65 @@
           Select the Applications where you want to use the attribute. If you choose none,
           it will be available in all Applications.
         </p>
-        <Select.Root type="single" bind:value={selectedAppId}>
-          <Select.Trigger class="w-full">
-            {selectedAppId === 'all'
-              ? 'All Applications'
-              : applications.find((a) => String(a.id) === selectedAppId)?.name ?? 'Selected'}
-          </Select.Trigger>
-          <Select.Content>
-            <Select.Item value="all" label="All Applications" />
-            {#each applications as app (app.id)}
-              <Select.Item value={String(app.id)} label={app.name ?? ''} />
+        <Popover.Root bind:open={appDropdownOpen}>
+          <Popover.Trigger class="flex w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background hover:bg-accent hover:text-accent-foreground cursor-pointer">
+            <span class={selectedAppIds.length === 0 ? 'text-muted-foreground' : ''}>
+              {selectedAppIds.length === 0 ? 'Select Applications' : `${selectedAppIds.length} selected`}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><path d="m6 9 6 6 6-6"/></svg>
+          </Popover.Trigger>
+          <Popover.Content class="w-[--bits-popover-trigger-width] p-0" align="start">
+            <div class="max-h-48 overflow-y-auto py-1">
+              {#each applications as app (app.id)}
+                {@const isSelected = selectedAppIds.includes(app.id ?? 0)}
+                <button
+                  class="flex w-full items-center gap-2.5 px-3 py-2 text-sm cursor-pointer transition-colors
+                    {isSelected ? 'bg-accent' : 'hover:bg-accent/50'}"
+                  onclick={() => toggleApp(app.id ?? 0)}
+                >
+                  <Checkbox
+                    checked={isSelected}
+                    class="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <div class="text-left">
+                    <span class="font-medium">{app.name ?? 'Unnamed'}</span>
+                    {#if app.description}
+                      <span class="text-muted-foreground ml-2">{app.description}</span>
+                    {/if}
+                  </div>
+                </button>
+              {/each}
+              {#if applications.length === 0}
+                <p class="px-3 py-2 text-sm text-muted-foreground">No applications found.</p>
+              {/if}
+            </div>
+          </Popover.Content>
+        </Popover.Root>
+
+        <!-- Selected apps list -->
+        {#if selectedAppIds.length > 0}
+          <div class="space-y-1">
+            {#each selectedAppIds as appId (appId)}
+              {@const app = applications.find((a) => a.id === appId)}
+              {#if app}
+                <div class="flex items-center justify-between rounded-md border px-3 py-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="text-sm font-medium truncate">{app.name ?? 'Unnamed'}</span>
+                    {#if app.description}
+                      <span class="text-sm text-muted-foreground truncate">{app.description}</span>
+                    {/if}
+                  </div>
+                  <button
+                    class="ml-2 shrink-0 rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                    onclick={() => removeApp(appId)}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              {/if}
             {/each}
-          </Select.Content>
-        </Select.Root>
+          </div>
+        {/if}
       </div>
     </div>
 
