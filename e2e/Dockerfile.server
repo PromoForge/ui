@@ -4,6 +4,7 @@ RUN git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/"
 ENV GOPRIVATE=github.com/PromoForge/*
 RUN git clone --depth 1 https://github.com/PromoForge/promoforge.git /src
 WORKDIR /src
+RUN sed -i '/^replace /d' go.mod && go mod tidy
 RUN make promoforge-server promoforge-sql-tool
 
 FROM debian:bookworm-slim
