@@ -4,12 +4,14 @@ import {
   backstageServiceUpdateAttribute,
   backstageServiceDeleteAttribute,
   backstageServiceArchiveAttribute,
+  backstageServiceImportAttributeAllowedList,
 } from "$lib/api/generated";
 import type {
   Attribute,
   CreateAttributeRequest,
   UpdateAttributeRequest,
   ArchiveAttributeRequest,
+  ImportAttributeAllowedListResponse,
 } from "$lib/api/generated/types.gen";
 
 export async function listAttributes(): Promise<{
@@ -74,4 +76,18 @@ export async function archiveAttribute(
   if (error) {
     throw new Error("Failed to archive attribute");
   }
+}
+
+export async function importAttributeAllowedList(
+  attributeId: number,
+  csvContent: string,
+): Promise<ImportAttributeAllowedListResponse> {
+  const { data, error } = await backstageServiceImportAttributeAllowedList({
+    path: { attributeId },
+    body: { attributeId, csvContent },
+  });
+  if (error) {
+    throw new Error("Failed to import allowed list");
+  }
+  return data!;
 }
