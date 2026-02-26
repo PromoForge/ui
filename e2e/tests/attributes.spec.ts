@@ -323,10 +323,11 @@ test.describe("Attributes", () => {
     // Sheet should open with "Edit Attribute" title
     await expect(page.getByRole("heading", { name: "Edit Attribute" })).toBeVisible();
 
-    // Verify read-only fields are displayed as text (not inputs)
-    await expect(page.getByText("Application")).toBeVisible();
-    await expect(page.getByText("String", { exact: true })).toBeVisible();
-    await expect(page.getByText("e2e_editable_attr")).toBeVisible();
+    // Verify read-only fields are displayed as text (not inputs) — scope to the sheet
+    const sheet = page.getByLabel("Edit Attribute");
+    await expect(sheet.locator(".bg-muted\\/50").filter({ hasText: "Application" })).toBeVisible();
+    await expect(sheet.locator(".bg-muted\\/50").filter({ hasText: "String" })).toBeVisible();
+    await expect(sheet.locator(".bg-muted\\/50").filter({ hasText: "e2e_editable_attr" })).toBeVisible();
 
     // Verify editable fields are pre-populated
     await expect(page.getByPlaceholder("e.g. Order Status")).toHaveValue("Editable Attr");
