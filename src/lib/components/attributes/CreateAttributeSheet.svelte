@@ -23,7 +23,7 @@
   }: {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (request: CreateAttributeRequest) => Promise<void>
+    onSubmit: (request: CreateAttributeRequest, csvContent?: string) => Promise<void>
     applications: Application[]
   } = $props()
 
@@ -46,6 +46,9 @@
   let allowCustomValues = $state(false)
   let csvFileName = $state('')
   let datePickerOpen = $state(false)
+  let csvContent = $state<string | null>(null)
+
+  const hasCsv = $derived(csvContent !== null)
 
   // Types that show picklist section
   const PICKLIST_TYPES = [
@@ -110,19 +113,21 @@
     const reader = new FileReader()
     reader.onload = () => {
       const text = reader.result as string
-      const values = text
-        .split(/[\r\n,]+/)
-        .map((v) => v.trim())
-        .filter((v) => v.length > 0)
-      if (isNumberType) {
-        suggestions = values.filter((v) => !isNaN(Number(v))).slice(0, 50)
-      } else {
-        suggestions = values.slice(0, 50)
-      }
+      // Store raw CSV — add "item" header if not present
+      const lines = text.trim().split(/\r?\n/)
+      const hasHeader = lines[0]?.toLowerCase().trim() === 'item'
+      csvContent = hasHeader ? text : `item\n${text}`
+      // Clear inline suggestions — CSV and tags are mutually exclusive
+      suggestions = []
+      tagInputValue = ''
     }
     reader.readAsText(file)
-    // Reset input so same file can be re-uploaded
     input.value = ''
+  }
+
+  function removeCsv() {
+    csvContent = null
+    csvFileName = ''
   }
 
   function downloadSampleCsv() {
@@ -150,12 +155,12 @@
 
   // Clear picklist when type changes
   $effect(() => {
-    // Read `type` to track it
     type;
     suggestions = []
     tagInputValue = ''
     allowCustomValues = false
     csvFileName = ''
+    csvContent = null
   })
 
   // Auto-slug generation
@@ -189,6 +194,7 @@
     tagInputValue = ''
     allowCustomValues = false
     csvFileName = ''
+    csvContent = null
     selectedAppIds = []
     appDropdownOpen = false
     submitting = false
@@ -213,17 +219,32 @@
     submitting = true
     try {
       const subscribedApplicationsIds = selectedAppIds.length > 0 ? selectedAppIds : undefined
-      await onSubmit({
+
+      // Build the create request — suggestions and CSV are mutually exclusive
+      const request: CreateAttributeRequest = {
         entity: entity as CreateAttributeRequest['entity'],
         type: type as CreateAttributeRequest['type'],
         name: apiName,
         title: name || undefined,
         description: description || undefined,
-        suggestions: suggestions.length > 0 ? suggestions : undefined,
-        hasAllowedList: suggestions.length > 0 ? true : undefined,
-        restrictedBySuggestions: showPicklist ? !allowCustomValues : undefined,
         subscribedApplicationsIds
-      })
+      }
+
+      if (hasCsv) {
+        // CSV mode: no suggestions, no flags — import endpoint sets hasAllowedList
+      } else if (suggestions.length > 0) {
+        // Inline suggestions mode
+        request.suggestions = suggestions
+        request.restrictedBySuggestions = !allowCustomValues
+      } else if (showPicklist) {
+        // Picklist type but no values entered — send restrictedBySuggestions based on checkbox
+        request.restrictedBySuggestions = !allowCustomValues
+      }
+
+      // Base64-encode CSV content for the proto bytes field
+      const encodedCsv = csvContent ? btoa(csvContent) : undefined
+
+      await onSubmit(request, encodedCsv)
       resetForm()
       onOpenChange(false)
     } catch (e) {
