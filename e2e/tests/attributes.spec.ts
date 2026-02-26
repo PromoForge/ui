@@ -151,6 +151,165 @@ test.describe("Attributes", () => {
     });
   });
 
+  test("should create attribute with inline suggestions and send correct payload", async ({ page }) => {
+    // Open create sheet
+    await page.getByRole("button", { name: "Create Attribute" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Create Attribute" })
+    ).toBeVisible();
+
+    // Select Entity: Application
+    await page.getByRole("button", { name: "Select entity..." }).click();
+    await page.getByRole("option", { name: "Application" }).click();
+
+    // Select Type: String (shows picklist section)
+    await page.getByRole("button", { name: "Select type..." }).click();
+    await page.getByRole("option", { name: "String", exact: true }).click();
+
+    // Fill required fields
+    await page.getByPlaceholder("e.g. order_status").fill("e2e_suggestions_attr");
+    await page.getByPlaceholder("e.g. Order Status").fill("E2E Suggestions");
+
+    // Add inline suggestions via tag input
+    // After adding the first tag, the placeholder disappears, so locate by the
+    // stable selector: the only text input inside the tag-input container.
+    const tagContainer = page.locator(".flex-wrap.items-center.gap-1\\.5");
+    const tagInput = tagContainer.locator("input[type='text']");
+
+    await tagInput.fill("gold");
+    await tagInput.press("Enter");
+    await tagInput.fill("silver");
+    await tagInput.press("Enter");
+    await tagInput.fill("bronze");
+    await tagInput.press("Enter");
+
+    // Verify tags appear
+    await expect(page.getByText("gold")).toBeVisible();
+    await expect(page.getByText("silver")).toBeVisible();
+    await expect(page.getByText("bronze")).toBeVisible();
+    await expect(page.getByText("3 / 50 values")).toBeVisible();
+
+    // Verify "Allow custom values" checkbox is visible
+    await expect(page.getByText("Allow users to enter custom values")).toBeVisible();
+
+    // Set up request interception right before submit
+    const createPromise = page.waitForRequest(
+      (req) => req.url().includes("/api/v1/attributes") && req.method() === "POST"
+    );
+
+    // Submit
+    await page.getByRole("button", { name: "Create Attribute" }).last().click();
+
+    // Verify the request payload
+    const createRequest = await createPromise;
+    const body = createRequest.postDataJSON();
+    expect(body.suggestions).toEqual(["gold", "silver", "bronze"]);
+    expect(body.restrictedBySuggestions).toBe(true);
+    expect(body).not.toHaveProperty("hasAllowedList");
+
+    // Verify sheet closes and attribute appears
+    await expect(page.getByText("E2E Suggestions")).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("should create attribute with CSV upload and not send suggestions", async ({ page }) => {
+    // Intercept both the create and import API calls
+    const createPromise = page.waitForRequest(
+      (req) => req.url().includes("/api/v1/attributes") && req.method() === "POST" && !req.url().includes("allowed_list")
+    );
+    const importPromise = page.waitForRequest(
+      (req) => req.url().includes("allowed_list/import") && req.method() === "POST"
+    );
+
+    // Open create sheet
+    await page.getByRole("button", { name: "Create Attribute" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Create Attribute" })
+    ).toBeVisible();
+
+    // Select Entity: Application
+    await page.getByRole("button", { name: "Select entity..." }).click();
+    await page.getByRole("option", { name: "Application" }).click();
+
+    // Select Type: String
+    await page.getByRole("button", { name: "Select type..." }).click();
+    await page.getByRole("option", { name: "String", exact: true }).click();
+
+    // Fill required fields
+    await page.getByPlaceholder("e.g. order_status").fill("e2e_csv_attr");
+    await page.getByPlaceholder("e.g. Order Status").fill("E2E CSV");
+
+    // First add a tag to verify CSV clears it
+    const tagInput = page.getByPlaceholder("Type a value and press Enter...");
+    await tagInput.fill("should_be_cleared");
+    await tagInput.press("Enter");
+    await expect(page.getByText("should_be_cleared")).toBeVisible();
+
+    // Upload a CSV file
+    const fileInput = page.locator('input[type="file"][accept=".csv"]');
+    await fileInput.setInputFiles({
+      name: "test_values.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("item\nfoo\nbar\nbaz"),
+    });
+
+    // Verify CSV mode: tag input replaced with message, checkbox hidden
+    await expect(page.getByText("Values will be imported from CSV file.")).toBeVisible();
+    await expect(page.getByText("should_be_cleared")).toBeHidden();
+    await expect(page.getByText("Allow users to enter custom values")).toBeHidden();
+    await expect(page.getByText("test_values.csv")).toBeVisible();
+
+    // Submit
+    await page.getByRole("button", { name: "Create Attribute" }).last().click();
+
+    // Verify the create request has no suggestions
+    const createRequest = await createPromise;
+    const createBody = createRequest.postDataJSON();
+    expect(createBody).not.toHaveProperty("suggestions");
+    expect(createBody).not.toHaveProperty("hasAllowedList");
+
+    // Verify the import request was sent with CSV content
+    const importRequest = await importPromise;
+    const importBody = importRequest.postDataJSON();
+    expect(importBody.csvContent).toBeTruthy();
+
+    // Verify sheet closes and attribute appears
+    await expect(page.getByText("E2E CSV")).toBeVisible({ timeout: 10_000 });
+  });
+
+  test("should remove CSV and re-enable tag input", async ({ page }) => {
+    // Open create sheet
+    await page.getByRole("button", { name: "Create Attribute" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Create Attribute" })
+    ).toBeVisible();
+
+    // Select Entity and Type
+    await page.getByRole("button", { name: "Select entity..." }).click();
+    await page.getByRole("option", { name: "Application" }).click();
+    await page.getByRole("button", { name: "Select type..." }).click();
+    await page.getByRole("option", { name: "String", exact: true }).click();
+
+    // Upload a CSV file
+    const fileInput = page.locator('input[type="file"][accept=".csv"]');
+    await fileInput.setInputFiles({
+      name: "removable.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("item\nval1\nval2"),
+    });
+
+    // Verify CSV mode is active
+    await expect(page.getByText("Values will be imported from CSV file.")).toBeVisible();
+    await expect(page.getByText("removable.csv")).toBeVisible();
+
+    // Click the X button to remove CSV
+    await page.getByText("removable.csv").locator("..").locator("button").click();
+
+    // Verify tag input is re-enabled
+    await expect(page.getByPlaceholder("Type a value and press Enter...")).toBeVisible();
+    await expect(page.getByText("Allow users to enter custom values")).toBeVisible();
+    await expect(page.getByText("Values will be imported from CSV file.")).toBeHidden();
+  });
+
   test("should sort attributes", async ({ page }) => {
     // Find and click the sort dropdown
     const sortButton = page.getByRole("button", { name: /Sort|sort/ });

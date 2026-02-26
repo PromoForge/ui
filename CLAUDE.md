@@ -87,6 +87,7 @@ UI primitives are provided by **shadcn-svelte** (built on **Bits UI**). Componen
 - **Available components:** https://shadcn-svelte.com/docs/components
 - **Theming:** CSS variables in `app.css` using shadcn's convention (`--background`, `--foreground`, `--primary`, etc.)
 - **Animations:** Provided by `tw-animate-css`
+- IMPORANT: if you need to build new component, check first if it already exists in shadcn or lets list can be composed of other shadcn components
 
 ### Adding a new UI component
 1. First check if shadcn-svelte has it: `bunx shadcn-svelte@latest add <name>`
@@ -106,7 +107,11 @@ App-specific components that build on shadcn primitives:
 - **Build:** Vite, `@sveltejs/adapter-static` (SPA mode with `index.html` fallback)
 - **Package manager:** bun
 
-## E2E Tests (Playwright)
+## Testing
+
+**Only write Playwright E2E tests.** Do not add unit test frameworks (vitest, jest, etc.) or unit tests.
+
+### E2E Tests (Playwright)
 
 - Config: `e2e/playwright.config.ts` — runs dev server on port 5174, seeds via `e2e/global-setup.ts`
 - Infrastructure: `e2e/docker-compose.yml` — builds PromoForge server from GitHub, runs Postgres
