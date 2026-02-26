@@ -128,7 +128,7 @@
   <CreateAttributeSheet
     open={attributeStore.createSheetOpen}
     onOpenChange={(v) => (attributeStore.createSheetOpen = v)}
-    onSubmit={async (req) => { await attributeStore.createAttribute(req) }}
+    onSubmit={async (req: import('$lib/api/generated/types.gen').CreateAttributeRequest, csvContent?: string) => { await attributeStore.createAttribute(req, csvContent) }}
     applications={applicationStore.applications}
   />
 </div>
