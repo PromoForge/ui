@@ -18,14 +18,15 @@
   let activeCategory = $state<keyof FilterState | null>(null)
   let prevCategory = $state<keyof FilterState>('entity')
 
-  // Track the last non-null category synchronously
-  const displayCategory = $derived.by(() => {
+  // Remember the last non-null category so the panel doesn't flash during close animation
+  $effect(() => {
     if (activeCategory) {
       prevCategory = activeCategory
-      return activeCategory
     }
-    return prevCategory
   })
+
+  // Pure derivation — show active category, or fall back to the last one seen
+  const displayCategory = $derived(activeCategory ?? prevCategory)
 
   // Reset to category list when closing
   $effect(() => {
