@@ -1,4 +1,4 @@
-.PHONY: dev build check preview gen-api update-api format clean run test-e2e test-e2e-up test-e2e-down
+.PHONY: dev build check preview gen-api update-api format clean run test-e2e test-e2e-ui test-e2e-headed test-e2e-up test-e2e-down
 
 dev:
 	bun run dev
@@ -33,6 +33,18 @@ run: test-e2e-down test-e2e-up
 # E2E tests
 test-e2e: test-e2e-down test-e2e-up
 	bunx playwright test --config e2e/playwright.config.ts; \
+	status=$$?; \
+	$(MAKE) test-e2e-down; \
+	exit $$status
+
+test-e2e-ui: test-e2e-down test-e2e-up
+	bunx playwright test --config e2e/playwright.config.ts --ui; \
+	status=$$?; \
+	$(MAKE) test-e2e-down; \
+	exit $$status
+
+test-e2e-headed: test-e2e-down test-e2e-up
+	bunx playwright test --config e2e/playwright.config.ts --headed; \
 	status=$$?; \
 	$(MAKE) test-e2e-down; \
 	exit $$status
