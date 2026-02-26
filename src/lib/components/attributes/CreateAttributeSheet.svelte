@@ -424,18 +424,24 @@
             </Alert.Description>
           </Alert.Root>
 
-          <label class="flex items-center gap-2 text-sm cursor-pointer">
-            <Checkbox
-              checked={allowCustomValues}
-              onCheckedChange={(v) => (allowCustomValues = !!v)}
-            />
-            Allow users to enter custom values in the Rule Builder
-          </label>
+          {#if !hasCsv}
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+              <Checkbox
+                checked={allowCustomValues}
+                onCheckedChange={(v) => (allowCustomValues = !!v)}
+              />
+              Allow users to enter custom values in the Rule Builder
+            </label>
+          {/if}
 
           <div class="space-y-1.5">
             <Label class="text-sm font-medium">Values</Label>
 
-            {#if isTimeType}
+            {#if hasCsv}
+              <div class="rounded-md border border-input bg-muted/50 px-3 py-2 min-h-[40px]">
+                <p class="text-sm text-muted-foreground">Values will be imported from CSV file.</p>
+              </div>
+            {:else if isTimeType}
               <!-- Date picker tag input -->
               <div class="flex flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 min-h-[40px]">
                 {#each suggestions as value, i (value)}
@@ -487,33 +493,46 @@
               </div>
             {/if}
 
-            {#if suggestions.length > 0}
+            {#if suggestions.length > 0 && !hasCsv}
               <p class="text-xs text-muted-foreground">{suggestions.length} / 50 values</p>
             {/if}
           </div>
 
           <!-- CSV Upload -->
           <div class="space-y-2 pt-1">
-            <p class="text-sm text-muted-foreground">
-              Import a CSV file of up to 500,000 values. The import overwrites any entered
-              values and previous imports.
-              <button
-                class="text-primary underline underline-offset-2 hover:text-primary/80 cursor-pointer"
-                onclick={downloadSampleCsv}
-              >
-                Download a sample CSV file.
-              </button>
-            </p>
-            <label class="inline-flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors">
-              <Upload size={14} />
-              Upload a CSV file
-              <input
-                type="file"
-                accept=".csv"
-                class="hidden"
-                onchange={handleCsvUpload}
-              />
-            </label>
+            {#if hasCsv}
+              <div class="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm">
+                <Upload size={14} class="shrink-0 text-muted-foreground" />
+                <span class="flex-1 truncate">{csvFileName}</span>
+                <button
+                  class="shrink-0 rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                  onclick={removeCsv}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            {:else}
+              <p class="text-sm text-muted-foreground">
+                Import a CSV file of up to 500,000 values. The import overwrites any entered
+                values and previous imports.
+                <button
+                  class="text-primary underline underline-offset-2 hover:text-primary/80 cursor-pointer"
+                  onclick={downloadSampleCsv}
+                >
+                  Download a sample CSV file.
+                </button>
+              </p>
+              <label class="inline-flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors">
+                <Upload size={14} />
+                Upload a CSV file
+                <input
+                  type="file"
+                  accept=".csv"
+                  class="hidden"
+                  onchange={handleCsvUpload}
+                />
+              </label>
+            {/if}
           </div>
         </div>
       {/if}
