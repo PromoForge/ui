@@ -82,6 +82,15 @@ export default async function globalSetup() {
       description: "Tags associated with the event",
       eventType: "EVENT_TYPE_CUSTOM",
     },
+    {
+      entity: "ATTRIBUTE_ENTITY_APPLICATION",
+      name: "e2e_editable_attr",
+      title: "Editable Attr",
+      type: "ATTRIBUTE_TYPE_STRING",
+      description: "Attribute for edit/delete E2E tests",
+      suggestions: ["option_a", "option_b", "option_c"],
+      restrictedBySuggestions: true,
+    },
   ];
 
   const attributeIds: number[] = [];
