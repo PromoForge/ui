@@ -310,6 +310,74 @@ test.describe("Attributes", () => {
     await expect(page.getByText("Values will be imported from CSV file.")).toBeHidden();
   });
 
+  test("should open edit sheet with pre-populated data when clicking pen icon", async ({ page }) => {
+    // Hover over the "Editable Attr" row to reveal pen icon
+    const row = page.locator("table tbody tr").filter({ hasText: "Editable Attr" });
+    await row.hover();
+
+    // Click the pen icon
+    const editButton = row.getByLabel(/Edit Editable Attr/);
+    await expect(editButton).toBeVisible();
+    await editButton.click();
+
+    // Sheet should open with "Edit Attribute" title
+    await expect(page.getByRole("heading", { name: "Edit Attribute" })).toBeVisible();
+
+    // Verify read-only fields are displayed as text (not inputs)
+    await expect(page.getByText("Application")).toBeVisible();
+    await expect(page.getByText("String", { exact: true })).toBeVisible();
+    await expect(page.getByText("e2e_editable_attr")).toBeVisible();
+
+    // Verify editable fields are pre-populated
+    await expect(page.getByPlaceholder("e.g. Order Status")).toHaveValue("Editable Attr");
+    await expect(page.getByPlaceholder("Describe what this attribute is used for...")).toHaveValue(
+      "Attribute for edit/delete E2E tests"
+    );
+
+    // Verify suggestions are pre-populated as tags
+    await expect(page.getByText("option_a")).toBeVisible();
+    await expect(page.getByText("option_b")).toBeVisible();
+    await expect(page.getByText("option_c")).toBeVisible();
+
+    // Cancel to close
+    await page.getByRole("button", { name: "Cancel" }).click();
+  });
+
+  test("should edit attribute name and description", async ({ page }) => {
+    // Open edit sheet for "Editable Attr"
+    const row = page.locator("table tbody tr").filter({ hasText: "Editable Attr" });
+    await row.hover();
+    await row.getByLabel(/Edit Editable Attr/).click();
+    await expect(page.getByRole("heading", { name: "Edit Attribute" })).toBeVisible();
+
+    // Intercept the update request
+    const updatePromise = page.waitForRequest(
+      (req) => req.url().includes("/api/v1/attributes/") && req.method() === "PUT"
+    );
+
+    // Modify name
+    const nameInput = page.getByPlaceholder("e.g. Order Status");
+    await nameInput.clear();
+    await nameInput.fill("Updated Attr");
+
+    // Modify description
+    const descInput = page.getByPlaceholder("Describe what this attribute is used for...");
+    await descInput.clear();
+    await descInput.fill("Updated description");
+
+    // Submit
+    await page.getByRole("button", { name: "Update Attribute" }).click();
+
+    // Verify the update request payload
+    const updateRequest = await updatePromise;
+    const body = updateRequest.postDataJSON();
+    expect(body.title).toBe("Updated Attr");
+    expect(body.description).toBe("Updated description");
+
+    // Sheet should close and table should show updated name
+    await expect(page.getByText("Updated Attr")).toBeVisible({ timeout: 10_000 });
+  });
+
   test("should sort attributes", async ({ page }) => {
     // Find and click the sort dropdown
     const sortButton = page.getByRole("button", { name: /Sort|sort/ });
