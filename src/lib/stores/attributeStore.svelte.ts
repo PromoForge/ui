@@ -2,11 +2,13 @@ import {
   listAttributes,
   createAttribute as createAttributeApi,
   updateAttribute as updateAttributeApi,
+  deleteAttribute as deleteAttributeApi,
   importAttributeAllowedList as importAllowedListApi,
 } from "$lib/services/attributeService";
 import type {
   Attribute,
   CreateAttributeRequest,
+  UpdateAttributeRequest,
 } from "$lib/api/generated/types.gen";
 
 export const ENTITY_LABELS: Record<string, string> = {
@@ -55,6 +57,8 @@ function createAttributeStore() {
   let currentPage = $state(1);
   let pageSize = $state(50);
   let createSheetOpen = $state(false);
+  let editSheetOpen = $state(false);
+  let editingAttribute = $state<Attribute | null>(null);
 
   const filteredAttributes = $derived.by(() => {
     let result = attributes;
@@ -190,6 +194,33 @@ function createAttributeStore() {
     attributes = attributes.map((a) => (a.id === updated.id ? updated : a));
   }
 
+  function openEditSheet(attribute: Attribute) {
+    editingAttribute = attribute;
+    editSheetOpen = true;
+  }
+
+  function closeEditSheet() {
+    editSheetOpen = false;
+    editingAttribute = null;
+  }
+
+  async function updateAttributeData(
+    id: number,
+    request: Omit<UpdateAttributeRequest, "attributeId">,
+    csvContent?: string,
+  ): Promise<void> {
+    const updated = await updateAttributeApi(id, request);
+    attributes = attributes.map((a) => (a.id === updated.id ? updated : a));
+    if (csvContent && id) {
+      await importAllowedListApi(id, csvContent);
+    }
+  }
+
+  async function removeAttribute(id: number): Promise<void> {
+    await deleteAttributeApi(id);
+    attributes = attributes.filter((a) => a.id !== id);
+  }
+
   return {
     get attributes() {
       return attributes;
@@ -224,6 +255,15 @@ function createAttributeStore() {
     set createSheetOpen(v: boolean) {
       createSheetOpen = v;
     },
+    get editSheetOpen() {
+      return editSheetOpen;
+    },
+    set editSheetOpen(v: boolean) {
+      editSheetOpen = v;
+    },
+    get editingAttribute() {
+      return editingAttribute;
+    },
     get filteredAttributes() {
       return filteredAttributes;
     },
@@ -248,6 +288,10 @@ function createAttributeStore() {
     setPage,
     createAttribute,
     toggleVisibility,
+    openEditSheet,
+    closeEditSheet,
+    updateAttributeData,
+    removeAttribute,
   };
 }
 
