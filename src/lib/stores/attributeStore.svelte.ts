@@ -2,6 +2,7 @@ import {
   listAttributes,
   createAttribute as createAttributeApi,
   updateAttribute as updateAttributeApi,
+  importAttributeAllowedList as importAllowedListApi,
 } from "$lib/services/attributeService";
 import type {
   Attribute,
@@ -171,9 +172,13 @@ function createAttributeStore() {
 
   async function createAttribute(
     request: CreateAttributeRequest,
+    csvContent?: string,
   ): Promise<Attribute> {
     const attr = await createAttributeApi(request);
     attributes = [attr, ...attributes];
+    if (csvContent && attr.id) {
+      await importAllowedListApi(attr.id, csvContent);
+    }
     return attr;
   }
 
