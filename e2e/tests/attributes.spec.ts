@@ -393,4 +393,67 @@ test.describe("Attributes", () => {
       expect(firstRowText).toBeTruthy();
     }
   });
+
+  test("should show delete confirmation and cancel it", async ({ page }) => {
+    // Open edit sheet for the attribute (may have been renamed to "Updated Attr")
+    const row = page.locator("table tbody tr").filter({ hasText: "Updated Attr" });
+    await row.hover();
+    await row.getByLabel(/Edit Updated Attr/).click();
+    await expect(page.getByRole("heading", { name: "Edit Attribute" })).toBeVisible();
+
+    // Scroll down to delete section and click Delete Attribute
+    const deleteButton = page.getByRole("button", { name: "Delete Attribute" }).first();
+    await deleteButton.scrollIntoViewIfNeeded();
+    await deleteButton.click();
+
+    // Verify confirmation dialog appears
+    const dialog = page.locator("[role='alertdialog'], [role='dialog']").filter({ hasText: "Are you sure" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText("This action is permanent")).toBeVisible();
+
+    // Click Cancel
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+
+    // Dialog should close, sheet should still be open
+    await expect(dialog).toBeHidden();
+    await expect(page.getByRole("heading", { name: "Edit Attribute" })).toBeVisible();
+
+    // Close the sheet
+    await page.getByRole("button", { name: "Cancel" }).click();
+  });
+
+  test("should delete an attribute", async ({ page }) => {
+    // Verify attribute exists first
+    await expect(page.getByText("Updated Attr")).toBeVisible();
+
+    // Open edit sheet
+    const row = page.locator("table tbody tr").filter({ hasText: "Updated Attr" });
+    await row.hover();
+    await row.getByLabel(/Edit Updated Attr/).click();
+    await expect(page.getByRole("heading", { name: "Edit Attribute" })).toBeVisible();
+
+    // Intercept the delete request
+    const deletePromise = page.waitForRequest(
+      (req) => req.url().includes("/api/v1/attributes/") && req.method() === "DELETE"
+    );
+
+    // Click Delete Attribute button in the danger zone
+    const deleteButton = page.getByRole("button", { name: "Delete Attribute" }).first();
+    await deleteButton.scrollIntoViewIfNeeded();
+    await deleteButton.click();
+
+    // Confirm in dialog
+    const dialog = page.locator("[role='alertdialog'], [role='dialog']").filter({ hasText: "Are you sure" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Delete Attribute" }).click();
+
+    // Wait for delete request
+    await deletePromise;
+
+    // Both dialog and sheet should close
+    await expect(dialog).toBeHidden({ timeout: 5_000 });
+
+    // Attribute should no longer appear in the table
+    await expect(page.getByText("Updated Attr")).toBeHidden({ timeout: 10_000 });
+  });
 });
