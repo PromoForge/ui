@@ -9,7 +9,7 @@
   import AttributeTable from '$lib/components/attributes/AttributeTable.svelte'
   import AttributeFilterDropdown from '$lib/components/attributes/AttributeFilterDropdown.svelte'
   import AttributeSortDropdown from '$lib/components/attributes/AttributeSortDropdown.svelte'
-  import CreateAttributeSheet from '$lib/components/attributes/CreateAttributeSheet.svelte'
+  import AttributeSheet from '$lib/components/attributes/AttributeSheet.svelte'
 
   onMount(() => {
     attributeStore.loadAttributes()
@@ -97,6 +97,7 @@
     {:else}
       <AttributeTable
         attributes={attributeStore.paginatedAttributes}
+        onEdit={(attr) => attributeStore.openEditSheet(attr)}
       />
     {/if}
   </div>
@@ -125,10 +126,28 @@
   {/if}
 
   <!-- Create Sheet -->
-  <CreateAttributeSheet
+  <AttributeSheet
+    mode="create"
     open={attributeStore.createSheetOpen}
     onOpenChange={(v) => (attributeStore.createSheetOpen = v)}
-    onSubmit={async (req: import('$lib/api/generated/types.gen').CreateAttributeRequest, csvContent?: string) => { await attributeStore.createAttribute(req, csvContent) }}
+    onSubmit={async (req, csvContent) => { await attributeStore.createAttribute(req, csvContent) }}
+    applications={applicationStore.applications}
+  />
+
+  <!-- Edit Sheet -->
+  <AttributeSheet
+    mode="edit"
+    attribute={attributeStore.editingAttribute ?? undefined}
+    open={attributeStore.editSheetOpen}
+    onOpenChange={(v) => { if (!v) attributeStore.closeEditSheet() }}
+    onUpdate={async (req, csvContent) => {
+      if (attributeStore.editingAttribute?.id) {
+        await attributeStore.updateAttributeData(attributeStore.editingAttribute.id, req, csvContent)
+      }
+    }}
+    onDelete={async (id) => {
+      await attributeStore.removeAttribute(id)
+    }}
     applications={applicationStore.applications}
   />
 </div>
