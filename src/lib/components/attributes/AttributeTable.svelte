@@ -4,11 +4,14 @@
   import * as Table from '$lib/components/ui/table/index.js'
   import { Switch } from '$lib/components/ui/switch/index.js'
   import * as Tooltip from '$lib/components/ui/tooltip/index.js'
+  import { Pencil } from 'lucide-svelte'
 
   let {
-    attributes
+    attributes,
+    onEdit
   }: {
     attributes: Attribute[]
+    onEdit?: (attribute: Attribute) => void
   } = $props()
 
   const BADGE_COLORS = [
@@ -59,11 +62,22 @@
   </Table.Header>
   <Table.Body>
     {#each attributes as attr (attr.id)}
-      <Table.Row class="hover:bg-muted/50">
+      <Table.Row class="group hover:bg-muted/50">
         <Table.Cell>
-          <span class="inline-block rounded px-2.5 py-1 text-xs font-medium text-white {getBadgeColor(attr.title ?? attr.name ?? '')}">
-            {attr.title ?? attr.name ?? '—'}
-          </span>
+          <div class="flex items-center gap-2">
+            <span class="inline-block rounded px-2.5 py-1 text-xs font-medium text-white {getBadgeColor(attr.title ?? attr.name ?? '')}">
+              {attr.title ?? attr.name ?? '—'}
+            </span>
+            {#if onEdit && !attr.isBuiltin}
+              <button
+                class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-muted cursor-pointer"
+                onclick={() => onEdit(attr)}
+                aria-label="Edit {attr.title ?? attr.name}"
+              >
+                <Pencil size={14} class="text-muted-foreground" />
+              </button>
+            {/if}
+          </div>
         </Table.Cell>
         <Table.Cell class="font-mono text-sm text-muted-foreground">
           {attr.name ?? '—'}
