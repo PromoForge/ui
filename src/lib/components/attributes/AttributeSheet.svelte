@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Application, CreateAttributeRequest } from '$lib/api/generated/types.gen'
+  import type { Application, Attribute, CreateAttributeRequest, UpdateAttributeRequest } from '$lib/api/generated/types.gen'
   import { ENTITY_LABELS, TYPE_LABELS } from '$lib/stores/attributeStore.svelte'
   import * as Sheet from '$lib/components/ui/sheet/index.js'
   import * as Select from '$lib/components/ui/select/index.js'
@@ -14,16 +14,26 @@
   import { Calendar } from '$lib/components/ui/calendar/index.js'
   import { CircleHelp, Info, X, Upload, Trash2 } from 'lucide-svelte'
   import * as Tooltip from '$lib/components/ui/tooltip/index.js'
+  import { Separator } from '$lib/components/ui/separator/index.js'
+  import * as Dialog from '$lib/components/ui/dialog/index.js'
 
   let {
+    mode = 'create',
+    attribute = undefined,
     open = false,
     onOpenChange,
     onSubmit,
+    onUpdate,
+    onDelete,
     applications = []
   }: {
+    mode?: 'create' | 'edit'
+    attribute?: Attribute
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (request: CreateAttributeRequest, csvContent?: string) => Promise<void>
+    onSubmit?: (request: CreateAttributeRequest, csvContent?: string) => Promise<void>
+    onUpdate?: (request: Omit<UpdateAttributeRequest, 'attributeId'>, csvContent?: string) => Promise<void>
+    onDelete?: (attributeId: number) => Promise<void>
     applications: Application[]
   } = $props()
 
@@ -39,6 +49,11 @@
   let attempted = $state(false)
   let apiNameManuallyEdited = $state(false)
   let submitError = $state('')
+
+  // Delete dialog state
+  let deleteDialogOpen = $state(false)
+  let deleting = $state(false)
+  let deleteError = $state('')
 
   // Picklist state
   let suggestions = $state<string[]>([])
@@ -153,14 +168,17 @@
     selectedAppIds = selectedAppIds.filter((id) => id !== appId)
   }
 
-  // Clear picklist when type changes
+  // Clear picklist when type changes (create mode only)
+  let prevType = $state('')
   $effect(() => {
-    type;
-    suggestions = []
-    tagInputValue = ''
-    allowCustomValues = false
-    csvFileName = ''
-    csvContent = null
+    if (mode === 'create' && type !== prevType && prevType !== '') {
+      suggestions = []
+      tagInputValue = ''
+      allowCustomValues = false
+      csvFileName = ''
+      csvContent = null
+    }
+    prevType = type
   })
 
   // Auto-slug generation
@@ -170,6 +188,21 @@
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '_')
         .replace(/^_|_$/g, '')
+    }
+  })
+
+  // Pre-populate form in edit mode
+  $effect(() => {
+    if (mode === 'edit' && attribute && open) {
+      entity = attribute.entity ?? ''
+      type = attribute.type ?? ''
+      apiName = attribute.name ?? ''
+      name = attribute.title ?? ''
+      description = attribute.description ?? ''
+      suggestions = attribute.suggestions ? [...attribute.suggestions] : []
+      allowCustomValues = !(attribute.restrictedBySuggestions ?? true)
+      selectedAppIds = attribute.subscribedApplicationsIds ? [...attribute.subscribedApplicationsIds] : []
+      apiNameManuallyEdited = true // prevent auto-slug in edit mode
     }
   })
 
@@ -212,45 +245,91 @@
     attempted = true
     submitError = ''
 
-    if (!entity || !type || !apiName || !/^[a-zA-Z0-9_]+$/.test(apiName)) {
-      return
+    if (mode === 'create') {
+      if (!entity || !type || !apiName || !/^[a-zA-Z0-9_]+$/.test(apiName)) {
+        return
+      }
+
+      submitting = true
+      try {
+        const subscribedApplicationsIds = selectedAppIds.length > 0 ? selectedAppIds : undefined
+
+        const request: CreateAttributeRequest = {
+          entity: entity as CreateAttributeRequest['entity'],
+          type: type as CreateAttributeRequest['type'],
+          name: apiName,
+          title: name || undefined,
+          description: description || undefined,
+          subscribedApplicationsIds
+        }
+
+        if (hasCsv) {
+          // CSV mode
+        } else if (suggestions.length > 0) {
+          request.suggestions = suggestions
+          request.restrictedBySuggestions = !allowCustomValues
+        } else if (showPicklist) {
+          request.restrictedBySuggestions = !allowCustomValues
+        }
+
+        const encodedCsv = csvContent ? btoa(csvContent) : undefined
+        await onSubmit?.(request, encodedCsv)
+        resetForm()
+        onOpenChange(false)
+      } catch (e) {
+        submitError = e instanceof Error ? e.message : 'Failed to create attribute'
+      } finally {
+        submitting = false
+      }
+    } else {
+      // Edit mode
+      if (!attribute?.id) return
+
+      submitting = true
+      try {
+        const subscribedApplicationsIds = selectedAppIds.length > 0 ? selectedAppIds : undefined
+
+        const request: Omit<UpdateAttributeRequest, 'attributeId'> = {
+          title: name || undefined,
+          description: description || undefined,
+          subscribedApplicationsIds
+        }
+
+        if (hasCsv) {
+          // CSV mode — import handled separately
+        } else if (suggestions.length > 0) {
+          request.suggestions = suggestions
+          request.restrictedBySuggestions = !allowCustomValues
+        } else if (showPicklist) {
+          request.suggestions = []
+          request.restrictedBySuggestions = !allowCustomValues
+        }
+
+        const encodedCsv = csvContent ? btoa(csvContent) : undefined
+        await onUpdate?.(request, encodedCsv)
+        resetForm()
+        onOpenChange(false)
+      } catch (e) {
+        submitError = e instanceof Error ? e.message : 'Failed to update attribute'
+      } finally {
+        submitting = false
+      }
     }
+  }
 
-    submitting = true
+  async function handleDelete() {
+    if (!attribute?.id) return
+    deleting = true
+    deleteError = ''
     try {
-      const subscribedApplicationsIds = selectedAppIds.length > 0 ? selectedAppIds : undefined
-
-      // Build the create request — suggestions and CSV are mutually exclusive
-      const request: CreateAttributeRequest = {
-        entity: entity as CreateAttributeRequest['entity'],
-        type: type as CreateAttributeRequest['type'],
-        name: apiName,
-        title: name || undefined,
-        description: description || undefined,
-        subscribedApplicationsIds
-      }
-
-      if (hasCsv) {
-        // CSV mode: no suggestions, no flags — import endpoint sets hasAllowedList
-      } else if (suggestions.length > 0) {
-        // Inline suggestions mode
-        request.suggestions = suggestions
-        request.restrictedBySuggestions = !allowCustomValues
-      } else if (showPicklist) {
-        // Picklist type but no values entered — send restrictedBySuggestions based on checkbox
-        request.restrictedBySuggestions = !allowCustomValues
-      }
-
-      // Base64-encode CSV content for the proto bytes field
-      const encodedCsv = csvContent ? btoa(csvContent) : undefined
-
-      await onSubmit(request, encodedCsv)
+      await onDelete?.(attribute.id)
+      deleteDialogOpen = false
       resetForm()
       onOpenChange(false)
     } catch (e) {
-      submitError = e instanceof Error ? e.message : 'Failed to create attribute'
+      deleteError = e instanceof Error ? e.message : 'Failed to delete attribute'
     } finally {
-      submitting = false
+      deleting = false
     }
   }
 
@@ -263,7 +342,7 @@
 <Sheet.Root {open} onOpenChange={handleSheetOpenChange}>
   <Sheet.Content side="right" class="w-[480px] sm:max-w-[480px] flex flex-col">
     <Sheet.Header>
-      <Sheet.Title>Create Attribute</Sheet.Title>
+      <Sheet.Title>{mode === 'edit' ? 'Edit Attribute' : 'Create Attribute'}</Sheet.Title>
       <Sheet.Description class="text-sm text-foreground">
         To send specific data to PromoForge, create custom attributes, set a value for them via
         the integration API or via the Campaign Manager, and use them in your rules.
@@ -278,81 +357,112 @@
       {/if}
 
       <!-- Entity -->
-      <div class="space-y-1.5">
-        <Label class="text-sm font-medium">Entity</Label>
-        <Select.Root type="single" bind:value={entity}>
-          <Select.Trigger
-            class="w-full {entityError ? 'border-destructive ring-destructive' : ''}"
-          >
-            {entity ? ENTITY_LABELS[entity] ?? entity : 'Select entity...'}
-          </Select.Trigger>
-          <Select.Content>
-            {#each Object.entries(ENTITY_LABELS) as [value, label] (value)}
-              <Select.Item {value} {label} />
-            {/each}
-          </Select.Content>
-        </Select.Root>
-        {#if entityError}
-          <p class="text-xs text-destructive font-medium">{entityError}</p>
-        {/if}
-      </div>
+      {#if mode === 'edit'}
+        <div class="space-y-1.5">
+          <Label class="text-sm font-medium">Entity</Label>
+          <div class="rounded-md border border-input bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+            {ENTITY_LABELS[entity] ?? entity}
+          </div>
+        </div>
+      {:else}
+        <div class="space-y-1.5">
+          <Label class="text-sm font-medium">Entity</Label>
+          <Select.Root type="single" bind:value={entity}>
+            <Select.Trigger
+              class="w-full {entityError ? 'border-destructive ring-destructive' : ''}"
+            >
+              {entity ? ENTITY_LABELS[entity] ?? entity : 'Select entity...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each Object.entries(ENTITY_LABELS) as [value, label] (value)}
+                <Select.Item {value} {label} />
+              {/each}
+            </Select.Content>
+          </Select.Root>
+          {#if entityError}
+            <p class="text-xs text-destructive font-medium">{entityError}</p>
+          {/if}
+        </div>
+      {/if}
 
       <!-- Type -->
-      <div class="space-y-1.5">
-        <div class="flex items-center gap-1.5">
-          <Label class="text-sm font-medium">Type</Label>
-          <Tooltip.Root>
-            <Tooltip.Trigger>
-              <CircleHelp size={14} class="text-muted-foreground" />
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              <p>The data type for this attribute's values.</p>
-            </Tooltip.Content>
-          </Tooltip.Root>
+      {#if mode === 'edit'}
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5">
+            <Label class="text-sm font-medium">Type</Label>
+          </div>
+          <div class="rounded-md border border-input bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+            {TYPE_LABELS[type] ?? type}
+          </div>
         </div>
-        <Select.Root type="single" bind:value={type}>
-          <Select.Trigger
-            class="w-full {typeError ? 'border-destructive ring-destructive' : ''}"
-          >
-            {type ? TYPE_LABELS[type] ?? type : 'Select type...'}
-          </Select.Trigger>
-          <Select.Content>
-            {#each Object.entries(TYPE_LABELS) as [value, label] (value)}
-              <Select.Item {value} {label} />
-            {/each}
-          </Select.Content>
-        </Select.Root>
-        {#if typeError}
-          <p class="text-xs text-destructive font-medium">{typeError}</p>
-        {/if}
-      </div>
+      {:else}
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5">
+            <Label class="text-sm font-medium">Type</Label>
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                <CircleHelp size={14} class="text-muted-foreground" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <p>The data type for this attribute's values.</p>
+              </Tooltip.Content>
+            </Tooltip.Root>
+          </div>
+          <Select.Root type="single" bind:value={type}>
+            <Select.Trigger
+              class="w-full {typeError ? 'border-destructive ring-destructive' : ''}"
+            >
+              {type ? TYPE_LABELS[type] ?? type : 'Select type...'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each Object.entries(TYPE_LABELS) as [value, label] (value)}
+                <Select.Item {value} {label} />
+              {/each}
+            </Select.Content>
+          </Select.Root>
+          {#if typeError}
+            <p class="text-xs text-destructive font-medium">{typeError}</p>
+          {/if}
+        </div>
+      {/if}
 
       <!-- API Name -->
-      <div class="space-y-1.5">
-        <div class="flex items-center gap-1.5">
-          <Label class="text-sm font-medium">API name</Label>
-          <Tooltip.Root>
-            <Tooltip.Trigger>
-              <CircleHelp size={14} class="text-muted-foreground" />
-            </Tooltip.Trigger>
-            <Tooltip.Content>
-              <p>The machine-readable identifier. Alphanumeric and underscores only.</p>
-            </Tooltip.Content>
-          </Tooltip.Root>
+      {#if mode === 'edit'}
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5">
+            <Label class="text-sm font-medium">API name</Label>
+          </div>
+          <div class="rounded-md border border-input bg-muted/50 px-3 py-2 text-sm font-mono text-muted-foreground">
+            {apiName}
+          </div>
         </div>
-        <Input
-          value={apiName}
-          oninput={(e: Event) => {
-            apiName = (e.target as HTMLInputElement).value
-            apiNameManuallyEdited = true
-          }}
-          class={apiNameError ? 'border-destructive ring-destructive' : ''}
-          placeholder="e.g. order_status"
-        />
-        {#if apiNameError}
-          <p class="text-xs text-destructive font-medium">{apiNameError}</p>
-        {/if}
-      </div>
+      {:else}
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-1.5">
+            <Label class="text-sm font-medium">API name</Label>
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                <CircleHelp size={14} class="text-muted-foreground" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                <p>The machine-readable identifier. Alphanumeric and underscores only.</p>
+              </Tooltip.Content>
+            </Tooltip.Root>
+          </div>
+          <Input
+            value={apiName}
+            oninput={(e: Event) => {
+              apiName = (e.target as HTMLInputElement).value
+              apiNameManuallyEdited = true
+            }}
+            class={apiNameError ? 'border-destructive ring-destructive' : ''}
+            placeholder="e.g. order_status"
+          />
+          {#if apiNameError}
+            <p class="text-xs text-destructive font-medium">{apiNameError}</p>
+          {/if}
+        </div>
+      {/if}
 
       <!-- Name (title) -->
       <div class="space-y-1.5">
@@ -604,6 +714,26 @@
           </div>
         {/if}
       </div>
+
+      <!-- Delete Attribute (edit mode only) -->
+      {#if mode === 'edit'}
+        <Separator class="my-2" />
+        <div class="space-y-2 pt-2">
+          <h3 class="text-base font-medium text-destructive">Delete Attribute</h3>
+          <p class="text-sm text-muted-foreground">
+            Deleting the attribute also deletes its values. This operation cannot be undone
+            and the campaigns using this attribute will stop working.
+          </p>
+          <Button
+            variant="outline"
+            class="border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onclick={() => (deleteDialogOpen = true)}
+          >
+            <Trash2 size={14} class="mr-1.5" />
+            Delete Attribute
+          </Button>
+        </div>
+      {/if}
     </div>
 
     <Sheet.Footer class="border-t px-6 py-4">
@@ -612,11 +742,45 @@
       </Button>
       <Button onclick={handleSubmit} disabled={submitting}>
         {#if submitting}
-          Creating...
+          {mode === 'edit' ? 'Updating...' : 'Creating...'}
         {:else}
-          Create Attribute
+          {mode === 'edit' ? 'Update Attribute' : 'Create Attribute'}
         {/if}
       </Button>
     </Sheet.Footer>
   </Sheet.Content>
 </Sheet.Root>
+
+<Dialog.Root bind:open={deleteDialogOpen}>
+  <Dialog.Content class="sm:max-w-md">
+    <Dialog.Header>
+      <Dialog.Title>Delete Attribute</Dialog.Title>
+      <Dialog.Description>
+        Are you sure you want to delete {attribute?.title ?? attribute?.name ?? 'this attribute'}? This action is permanent.
+      </Dialog.Description>
+    </Dialog.Header>
+    {#if deleteError}
+      <div class="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        {deleteError}
+      </div>
+    {/if}
+    <Dialog.Footer>
+      <Button variant="ghost" onclick={() => (deleteDialogOpen = false)} disabled={deleting}>
+        Cancel
+      </Button>
+      <Button
+        variant="outline"
+        class="border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
+        onclick={handleDelete}
+        disabled={deleting}
+      >
+        {#if deleting}
+          Deleting...
+        {:else}
+          <Trash2 size={14} class="mr-1.5" />
+          Delete Attribute
+        {/if}
+      </Button>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog.Root>
