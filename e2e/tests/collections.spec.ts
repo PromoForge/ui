@@ -104,7 +104,7 @@ test.describe("Collections", () => {
     ).toBeVisible();
 
     // Verify delete section exists
-    await expect(page.getByText("Delete collection")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Delete collection" })).toBeVisible();
 
     // Cancel to close
     await page.getByRole("button", { name: "Cancel" }).click();
