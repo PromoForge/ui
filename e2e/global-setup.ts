@@ -209,6 +209,48 @@ export default async function globalSetup() {
     }
   }
 
+  // Create test webhooks
+  const webhookConfigs = [
+    {
+      name: "E2E Test Webhook",
+      description: "Webhook for E2E display tests",
+      verb: "WEBHOOK_VERB_POST",
+      url: "https://httpbin.org/post",
+      headers: [{ key: "x-test", value: "true" }],
+      parameters: [
+        {
+          type: "WEBHOOK_PARAMETER_TYPE_STRING",
+          name: "testParam",
+          description: "A test parameter",
+        },
+      ],
+      payload: '{"test": "${$testParam}"}',
+      applicationIds: [app.id],
+    },
+    {
+      name: "E2E Editable Webhook",
+      description: "Webhook for edit/delete E2E tests",
+      verb: "WEBHOOK_VERB_POST",
+      url: "https://httpbin.org/post",
+      headers: [],
+      parameters: [],
+      payload: "{}",
+      applicationIds: [app.id],
+    },
+  ];
+
+  const webhookIds: string[] = [];
+  for (const config of webhookConfigs) {
+    const whRes = await apiPost("/api/v1/webhooks", config, true);
+    if (whRes) {
+      const wh = whRes.webhook;
+      webhookIds.push(wh.id);
+      console.log(`Created webhook: ${wh.name} (id=${wh.id})`);
+    } else {
+      console.log(`Webhook ${config.name} already exists, skipping`);
+    }
+  }
+
   saveTestState({
     applicationId: app.id,
     applicationName: app.name,
@@ -216,6 +258,7 @@ export default async function globalSetup() {
     additionalCostIds,
     collectionIds,
     catalogIds,
+    webhookIds,
   });
 
   console.log("Test data seeded successfully.");

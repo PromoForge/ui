@@ -12,6 +12,7 @@ export interface TestState {
   additionalCostIds: number[];
   collectionIds: number[];
   catalogIds: number[];
+  webhookIds: string[];
 }
 
 export function saveTestState(state: TestState): void {
