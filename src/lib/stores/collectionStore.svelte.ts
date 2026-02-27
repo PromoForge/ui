@@ -93,9 +93,7 @@ function createCollectionStore() {
     request: Omit<UpdateAccountCollectionRequest, "collectionId">,
   ): Promise<void> {
     const updated = await updateCollectionApi(id, request);
-    collections = collections.map((c) =>
-      c.id === updated.id ? updated : c,
-    );
+    collections = collections.map((c) => (c.id === updated.id ? updated : c));
   }
 
   async function removeCollection(id: number): Promise<void> {
@@ -108,9 +106,7 @@ function createCollectionStore() {
     csvData: string,
   ): Promise<void> {
     const updated = await importCollectionItemsApi(collectionId, csvData);
-    collections = collections.map((c) =>
-      c.id === updated.id ? updated : c,
-    );
+    collections = collections.map((c) => (c.id === updated.id ? updated : c));
   }
 
   async function exportItems(collectionId: number): Promise<string> {

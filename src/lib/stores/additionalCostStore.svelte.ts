@@ -45,10 +45,7 @@ function createAdditionalCostStore() {
   const totalFiltered = $derived(filteredCosts.length);
   const totalPages = $derived(Math.max(1, Math.ceil(totalFiltered / pageSize)));
   const paginatedCosts = $derived(
-    filteredCosts.slice(
-      (currentPage - 1) * pageSize,
-      currentPage * pageSize,
-    ),
+    filteredCosts.slice((currentPage - 1) * pageSize, currentPage * pageSize),
   );
 
   async function loadAdditionalCosts() {

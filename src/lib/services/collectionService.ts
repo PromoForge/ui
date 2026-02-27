@@ -54,9 +54,7 @@ export async function updateCollection(
   return data!.collection!;
 }
 
-export async function deleteCollection(
-  collectionId: number,
-): Promise<void> {
+export async function deleteCollection(collectionId: number): Promise<void> {
   const { error } = await backstageServiceDeleteAccountCollection({
     path: { collectionId },
   });
