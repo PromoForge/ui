@@ -32,10 +32,14 @@
 		"vite-plugin-devtools-json": "^1.0.0"
 	},
 	"dependencies": {
+		"@codemirror/lang-json": "^6.0.2",
+		"@codemirror/state": "^6.5.4",
+		"@codemirror/view": "^6.39.15",
 		"@fontsource-variable/geist": "^5.2.8",
 		"@fontsource-variable/jetbrains-mono": "^5.2.8",
 		"bits-ui": "^2.16.2",
 		"clsx": "^2.1.1",
+		"codemirror": "^6.0.2",
 		"d3-scale": "^4.0.2",
 		"date-fns": "^4.1.0",
 		"layerchart": "^1.0.13",
