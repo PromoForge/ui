@@ -109,10 +109,51 @@ export default async function globalSetup() {
     }
   }
 
+  // Create test additional costs
+  const additionalCostConfigs = [
+    {
+      name: "e2e_shipping_cost",
+      title: "Shipping Cost",
+      description: "Delivery charges for the purchase.",
+      type: "ADDITIONAL_COST_TYPE_SESSION",
+      subscribedApplicationsIds: [app.id],
+    },
+    {
+      name: "e2e_extra_fees",
+      title: "Extra Fees",
+      description: "Extra fees applied to order.",
+      type: "ADDITIONAL_COST_TYPE_ITEM",
+    },
+    {
+      name: "e2e_editable_cost",
+      title: "Editable Cost",
+      description: "Cost for edit/delete E2E tests",
+      type: "ADDITIONAL_COST_TYPE_BOTH",
+      subscribedApplicationsIds: [app.id],
+    },
+  ];
+
+  const additionalCostIds: number[] = [];
+  for (const config of additionalCostConfigs) {
+    const costRes = await apiPost(
+      "/api/v1/additional_costs",
+      config,
+      true, // ignore 409
+    );
+    if (costRes) {
+      const costObj = costRes.additionalCost;
+      additionalCostIds.push(costObj.id);
+      console.log(`Created additional cost: ${costObj.title} (id=${costObj.id})`);
+    } else {
+      console.log(`Additional cost ${config.title} already exists, skipping`);
+    }
+  }
+
   saveTestState({
     applicationId: app.id,
     applicationName: app.name,
     attributeIds,
+    additionalCostIds,
   });
 
   console.log("Test data seeded successfully.");
