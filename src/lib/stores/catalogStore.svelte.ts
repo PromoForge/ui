@@ -51,9 +51,7 @@ function createCatalogStore() {
   });
 
   const totalFiltered = $derived(filteredCatalogs.length);
-  const totalPages = $derived(
-    Math.max(1, Math.ceil(totalFiltered / pageSize)),
-  );
+  const totalPages = $derived(Math.max(1, Math.ceil(totalFiltered / pageSize)));
   const paginatedCatalogs = $derived(
     filteredCatalogs.slice(
       (currentPage - 1) * pageSize,
@@ -104,9 +102,7 @@ function createCatalogStore() {
     currentPage = Math.max(1, Math.min(p, totalPages));
   }
 
-  async function addCatalog(
-    request: CreateCatalogRequest,
-  ): Promise<Catalog> {
+  async function addCatalog(request: CreateCatalogRequest): Promise<Catalog> {
     const catalog = await createCatalogApi(request);
     catalogs = [catalog, ...catalogs];
     return catalog;
@@ -146,8 +142,7 @@ function createCatalogStore() {
     try {
       selectedCatalog = await getCatalogApi(catalogId);
     } catch (e) {
-      itemsError =
-        e instanceof Error ? e.message : "Failed to load catalog";
+      itemsError = e instanceof Error ? e.message : "Failed to load catalog";
     } finally {
       itemsLoading = false;
     }
