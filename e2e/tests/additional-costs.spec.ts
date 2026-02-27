@@ -6,32 +6,49 @@ test.describe("Additional Costs", () => {
     await expect(
       page.getByRole("heading", { name: "Additional Costs" })
     ).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByText("Shipping Cost")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(
+      page.getByRole("button", { name: "Shipping Cost" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should display the additional costs page with seeded data", async ({
     page,
   }) => {
-    await expect(page.getByText("Shipping Cost")).toBeVisible();
-    await expect(page.getByText("Extra Fees")).toBeVisible();
-    await expect(page.getByText("Editable Cost")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Shipping Cost" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Extra Fees" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Editable Cost" })
+    ).toBeVisible();
 
-    // Verify scope badges
-    await expect(page.getByText("Cart (Session)").first()).toBeVisible();
-    await expect(page.getByText("Item").first()).toBeVisible();
+    // Verify scope badges within the table
+    const table = page.locator("table");
+    await expect(
+      table.getByText("Cart (Session)").first()
+    ).toBeVisible();
+    await expect(
+      table.getByText("Item", { exact: true }).first()
+    ).toBeVisible();
   });
 
   test("should search additional costs by name", async ({ page }) => {
     const searchInput = page.getByPlaceholder("Search");
     await searchInput.fill("Shipping");
 
-    await expect(page.getByText("Shipping Cost")).toBeVisible();
-    await expect(page.getByText("Extra Fees")).toBeHidden();
+    await expect(
+      page.getByRole("button", { name: "Shipping Cost" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Extra Fees" })
+    ).toBeHidden();
 
     await searchInput.clear();
-    await expect(page.getByText("Extra Fees")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Extra Fees" })
+    ).toBeVisible();
   });
 
   test("should create a new additional cost", async ({ page }) => {
@@ -65,9 +82,9 @@ test.describe("Additional Costs", () => {
       .click();
 
     // Should appear in the table
-    await expect(page.getByText("E2E Created Cost")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(
+      page.getByRole("button", { name: "E2E Created Cost" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should open edit sheet with pre-populated data when clicking title", async ({
@@ -81,7 +98,7 @@ test.describe("Additional Costs", () => {
     ).toBeVisible();
 
     // Verify read-only API name
-    const sheet = page.getByLabel("Edit Additional Cost");
+    const sheet = page.getByRole("dialog", { name: "Edit Additional Cost" });
     await expect(
       sheet
         .locator(".bg-muted\\/50")
@@ -131,9 +148,9 @@ test.describe("Additional Costs", () => {
     expect(body.title).toBe("Updated Cost");
     expect(body.description).toBe("Updated description");
 
-    await expect(page.getByText("Updated Cost")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(
+      page.getByRole("button", { name: "Updated Cost" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should show delete confirmation and cancel it", async ({ page }) => {
@@ -142,15 +159,15 @@ test.describe("Additional Costs", () => {
       page.getByRole("heading", { name: "Edit Additional Cost" })
     ).toBeVisible();
 
-    const deleteButton = page
-      .getByRole("button", { name: "Delete Additional Cost" })
-      .first();
-    await deleteButton.scrollIntoViewIfNeeded();
-    await deleteButton.click();
+    const sheetDeleteButton = page
+      .getByRole("dialog", { name: "Edit Additional Cost" })
+      .getByRole("button", { name: "Delete Additional Cost" });
+    await sheetDeleteButton.scrollIntoViewIfNeeded();
+    await sheetDeleteButton.click();
 
-    const dialog = page
-      .locator("[role='alertdialog'], [role='dialog']")
-      .filter({ hasText: "Are you sure" });
+    const dialog = page.getByRole("dialog", {
+      name: "Delete Additional Cost",
+    });
     await expect(dialog).toBeVisible();
 
     await dialog.getByRole("button", { name: "Cancel" }).click();
@@ -159,11 +176,16 @@ test.describe("Additional Costs", () => {
       page.getByRole("heading", { name: "Edit Additional Cost" })
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "Cancel" }).click();
+    await page
+      .getByRole("dialog", { name: "Edit Additional Cost" })
+      .getByRole("button", { name: "Cancel" })
+      .click();
   });
 
   test("should delete an additional cost", async ({ page }) => {
-    await expect(page.getByText("Updated Cost")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Updated Cost" })
+    ).toBeVisible();
 
     await page.getByRole("button", { name: "Updated Cost" }).click();
     await expect(
@@ -176,15 +198,15 @@ test.describe("Additional Costs", () => {
         req.method() === "DELETE"
     );
 
-    const deleteButton = page
-      .getByRole("button", { name: "Delete Additional Cost" })
-      .first();
-    await deleteButton.scrollIntoViewIfNeeded();
-    await deleteButton.click();
+    const sheetDeleteButton = page
+      .getByRole("dialog", { name: "Edit Additional Cost" })
+      .getByRole("button", { name: "Delete Additional Cost" });
+    await sheetDeleteButton.scrollIntoViewIfNeeded();
+    await sheetDeleteButton.click();
 
-    const dialog = page
-      .locator("[role='alertdialog'], [role='dialog']")
-      .filter({ hasText: "Are you sure" });
+    const dialog = page.getByRole("dialog", {
+      name: "Delete Additional Cost",
+    });
     await expect(dialog).toBeVisible();
     await dialog
       .getByRole("button", { name: "Delete Additional Cost" })
@@ -192,8 +214,8 @@ test.describe("Additional Costs", () => {
 
     await deletePromise;
     await expect(dialog).toBeHidden({ timeout: 5_000 });
-    await expect(page.getByText("Updated Cost")).toBeHidden({
-      timeout: 10_000,
-    });
+    await expect(
+      page.getByRole("button", { name: "Updated Cost" })
+    ).toBeHidden({ timeout: 10_000 });
   });
 });
