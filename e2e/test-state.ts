@@ -11,6 +11,7 @@ export interface TestState {
   attributeIds: number[];
   additionalCostIds: number[];
   collectionIds: number[];
+  catalogIds: number[];
 }
 
 export function saveTestState(state: TestState): void {

@@ -179,12 +179,43 @@ export default async function globalSetup() {
     }
   }
 
+  // Create test catalogs
+  const catalogConfigs = [
+    {
+      name: "E2E Test Catalog",
+      description: "Catalog for E2E display tests",
+      subscribedApplicationsIds: [app.id],
+    },
+    {
+      name: "E2E Editable Catalog",
+      description: "Catalog for edit/delete E2E tests",
+      subscribedApplicationsIds: [app.id],
+    },
+  ];
+
+  const catalogIds: number[] = [];
+  for (const config of catalogConfigs) {
+    const catRes = await apiPost(
+      "/api/v1/catalogs",
+      config,
+      true, // ignore 409
+    );
+    if (catRes) {
+      const cat = catRes.catalog;
+      catalogIds.push(cat.id);
+      console.log(`Created catalog: ${cat.name} (id=${cat.id})`);
+    } else {
+      console.log(`Catalog ${config.name} already exists, skipping`);
+    }
+  }
+
   saveTestState({
     applicationId: app.id,
     applicationName: app.name,
     attributeIds,
     additionalCostIds,
     collectionIds,
+    catalogIds,
   });
 
   console.log("Test data seeded successfully.");
