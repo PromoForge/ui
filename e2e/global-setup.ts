@@ -13,10 +13,10 @@ async function apiPost(
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    if (ignoreConflict && res.status === 409) {
+    const text = await res.text();
+    if (ignoreConflict && (res.status === 409 || text.includes("duplicate key"))) {
       return null;
     }
-    const text = await res.text();
     throw new Error(`POST ${path} failed (${res.status}): ${text}`);
   }
   return res.json();

@@ -6,17 +6,21 @@ test.describe("Webhooks", () => {
     await expect(
       page.getByRole("heading", { name: "Webhooks" })
     ).toBeVisible({ timeout: 15_000 });
-    // Wait for seeded webhook to appear
-    await expect(page.getByText("E2E Test Webhook")).toBeVisible({
-      timeout: 10_000,
-    });
+    // Wait for seeded webhook to appear (exact match to avoid "Copy" variant)
+    await expect(
+      page.getByRole("button", { name: "E2E Test Webhook", exact: true })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("should display the webhooks page with seeded data", async ({
     page,
   }) => {
-    await expect(page.getByText("E2E Test Webhook")).toBeVisible();
-    await expect(page.getByText("E2E Editable Webhook")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "E2E Test Webhook", exact: true })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "E2E Editable Webhook" })
+    ).toBeVisible();
 
     // Verify table columns
     const table = page.locator("table");
@@ -69,17 +73,14 @@ test.describe("Webhooks", () => {
   });
 
   test("should edit a webhook", async ({ page }) => {
-    // Click webhook name to open edit sheet
-    await page.getByText("E2E Editable Webhook").click();
+    // Click webhook name button to open edit sheet
+    await page
+      .getByRole("button", { name: "E2E Editable Webhook" })
+      .click();
 
     await expect(
       page.getByText("Edit the request details and payload")
-    ).toBeVisible();
-
-    const updatePromise = page.waitForRequest(
-      (req) =>
-        req.url().includes("/api/v1/webhooks/") && req.method() === "PUT"
-    );
+    ).toBeVisible({ timeout: 5_000 });
 
     // Change name
     const nameInput = page
@@ -89,7 +90,12 @@ test.describe("Webhooks", () => {
     await nameInput.clear();
     await nameInput.fill("Updated Webhook");
 
-    await page.getByRole("button", { name: "Save" }).click();
+    const updatePromise = page.waitForRequest(
+      (req) =>
+        req.url().includes("/api/v1/webhooks/") && req.method() === "PUT"
+    );
+
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await updatePromise;
 
     await expect(page.getByText("Updated Webhook")).toBeVisible({
@@ -98,9 +104,9 @@ test.describe("Webhooks", () => {
   });
 
   test("should copy a webhook", async ({ page }) => {
-    // Find the row with "E2E Test Webhook" and click its copy button
+    // Find the row with "E2E Test Webhook" (exact) and click its copy button
     const row = page.locator("table tbody tr", {
-      has: page.getByText("E2E Test Webhook"),
+      has: page.getByRole("button", { name: "E2E Test Webhook", exact: true }),
     });
 
     const copyPromise = page.waitForRequest(
@@ -120,11 +126,11 @@ test.describe("Webhooks", () => {
     await expect(page.getByText("Updated Webhook")).toBeVisible();
 
     // Click webhook name to edit
-    await page.getByText("Updated Webhook").click();
+    await page.getByRole("button", { name: "Updated Webhook" }).click();
 
     await expect(
       page.getByText("Edit the request details and payload")
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 5_000 });
 
     // Scroll to and click Delete
     const sheetDeleteButton = page
@@ -158,8 +164,10 @@ test.describe("Webhooks", () => {
     );
     await searchInput.fill("E2E Test");
 
-    // Should show "E2E Test Webhook" but not unrelated webhooks
-    await expect(page.getByText("E2E Test Webhook")).toBeVisible();
+    // Should show "E2E Test Webhook"
+    await expect(
+      page.getByRole("button", { name: "E2E Test Webhook", exact: true })
+    ).toBeVisible();
     // Clear and search for something that doesn't exist
     await searchInput.clear();
     await searchInput.fill("nonexistent-webhook-xyz");
