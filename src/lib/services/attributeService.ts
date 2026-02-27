@@ -82,9 +82,11 @@ export async function importAttributeAllowedList(
   attributeId: number,
   csvContent: string,
 ): Promise<ImportAttributeAllowedListResponse> {
+  // Proto bytes fields require base64 encoding in JSON
+  const encoded = btoa(csvContent);
   const { data, error } = await backstageServiceImportAttributeAllowedList({
     path: { attributeId },
-    body: { attributeId, csvContent },
+    body: { attributeId, csvContent: encoded },
   });
   if (error) {
     throw new Error("Failed to import allowed list");

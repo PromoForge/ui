@@ -67,9 +67,11 @@ export async function importCollectionItems(
   collectionId: number,
   csvData: string,
 ): Promise<Collection> {
+  // Proto bytes fields require base64 encoding in JSON
+  const encoded = btoa(csvData);
   const { data, error } = await backstageServiceImportAccountCollectionItems({
     path: { collectionId },
-    body: { collectionId, csvData },
+    body: { collectionId, csvData: encoded },
   });
   if (error) {
     throw new Error("Failed to import collection items");
@@ -86,5 +88,7 @@ export async function exportCollectionItems(
   if (error) {
     throw new Error("Failed to export collection items");
   }
-  return data?.csvData ?? "";
+  // Proto bytes fields are base64 encoded in JSON
+  const encoded = data?.csvData ?? "";
+  return encoded ? atob(encoded) : "";
 }
