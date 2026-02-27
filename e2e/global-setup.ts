@@ -149,11 +149,42 @@ export default async function globalSetup() {
     }
   }
 
+  // Create test collections
+  const collectionConfigs = [
+    {
+      name: "E2E Test Collection",
+      description: "Collection for E2E display tests",
+      subscribedApplicationsIds: [app.id],
+    },
+    {
+      name: "E2E Editable Collection",
+      description: "Collection for edit/delete E2E tests",
+      subscribedApplicationsIds: [app.id],
+    },
+  ];
+
+  const collectionIds: number[] = [];
+  for (const config of collectionConfigs) {
+    const colRes = await apiPost(
+      "/api/v1/collections",
+      config,
+      true, // ignore 409
+    );
+    if (colRes) {
+      const col = colRes.collection;
+      collectionIds.push(col.id);
+      console.log(`Created collection: ${col.name} (id=${col.id})`);
+    } else {
+      console.log(`Collection ${config.name} already exists, skipping`);
+    }
+  }
+
   saveTestState({
     applicationId: app.id,
     applicationName: app.name,
     attributeIds,
     additionalCostIds,
+    collectionIds,
   });
 
   console.log("Test data seeded successfully.");

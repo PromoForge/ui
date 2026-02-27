@@ -10,6 +10,7 @@ export interface TestState {
   applicationName: string;
   attributeIds: number[];
   additionalCostIds: number[];
+  collectionIds: number[];
 }
 
 export function saveTestState(state: TestState): void {
