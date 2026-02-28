@@ -251,6 +251,46 @@ export default async function globalSetup() {
     }
   }
 
+  // Create test custom effects
+  const customEffectConfigs = [
+    {
+      apiName: "e2e_strikethrough",
+      ruleBuilderName: "E2E Strikethrough Effect",
+      description: "Custom effect for E2E display tests",
+      scope: "CUSTOM_EFFECT_SCOPE_CART_ITEM",
+      applicationIds: [app.id],
+      parameters: [
+        {
+          type: "CUSTOM_EFFECT_PARAMETER_TYPE_STRING",
+          name: "message",
+          description: "The strikethrough message",
+        },
+      ],
+      payload: '{"strikethrough": true}',
+    },
+    {
+      apiName: "e2e_editable_effect",
+      ruleBuilderName: "E2E Editable Effect",
+      description: "Custom effect for edit/delete E2E tests",
+      scope: "CUSTOM_EFFECT_SCOPE_SESSION",
+      applicationIds: [app.id],
+      parameters: [],
+      payload: '{"editable": true}',
+    },
+  ];
+
+  const customEffectIds: number[] = [];
+  for (const config of customEffectConfigs) {
+    const ceRes = await apiPost("/api/v1/custom_effects", config, true);
+    if (ceRes) {
+      const ce = ceRes.customEffect;
+      customEffectIds.push(ce.id);
+      console.log(`Created custom effect: ${ce.ruleBuilderName} (id=${ce.id})`);
+    } else {
+      console.log(`Custom effect ${config.ruleBuilderName} already exists, skipping`);
+    }
+  }
+
   saveTestState({
     applicationId: app.id,
     applicationName: app.name,
@@ -259,6 +299,7 @@ export default async function globalSetup() {
     collectionIds,
     catalogIds,
     webhookIds,
+    customEffectIds,
   });
 
   console.log("Test data seeded successfully.");

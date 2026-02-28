@@ -28,7 +28,7 @@
   <!-- Header -->
   <div class="flex items-center justify-between px-8 pt-8 pb-2">
     <h1 class="text-2xl font-semibold">Custom Effects</h1>
-    <Button onclick={() => goto('/settings/tools/custom-effects/new')}>
+    <Button href="/settings/tools/custom-effects/new">
       <Plus size={16} class="mr-1.5" />
       Create Custom Effect
     </Button>

@@ -13,6 +13,7 @@ export interface TestState {
   collectionIds: number[];
   catalogIds: number[];
   webhookIds: string[];
+  customEffectIds: number[];
 }
 
 export function saveTestState(state: TestState): void {

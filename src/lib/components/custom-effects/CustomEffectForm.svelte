@@ -49,7 +49,7 @@
   let description = $state(customEffect?.description ?? '')
   let selectedAppIds = $state<number[]>(customEffect?.connectedApplicationIds ?? [])
   let parameters = $state<CustomEffectParameter[]>(customEffect?.parameters ?? [])
-  let payload = $state(customEffect?.payload ?? '{\n  \n}')
+  let payload = $state(customEffect?.payload ?? '{}')
   let deleteDialogOpen = $state(false)
 
   const isValid = $derived(
