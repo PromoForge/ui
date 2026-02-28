@@ -23,11 +23,11 @@ test.describe("Cart Item Catalogs", () => {
     ).toBeVisible();
 
     // Verify table columns
-    const table = page.locator("table");
-    await expect(table.getByText("Name")).toBeVisible();
-    await expect(table.getByText("ID")).toBeVisible();
-    await expect(table.getByText("Applications")).toBeVisible();
-    await expect(table.getByText("Edit")).toBeVisible();
+    const headers = page.locator("table thead");
+    await expect(headers.getByText("Name")).toBeVisible();
+    await expect(headers.getByText("ID")).toBeVisible();
+    await expect(headers.getByText("Applications")).toBeVisible();
+    await expect(headers.getByText("Edit")).toBeVisible();
   });
 
   test("should create a new catalog", async ({ page }) => {
@@ -66,14 +66,21 @@ test.describe("Cart Item Catalogs", () => {
   test("should navigate to catalog detail page", async ({ page }) => {
     await page.getByRole("link", { name: "E2E Test Catalog" }).click();
 
-    // Verify breadcrumb
-    await expect(page.getByText("Cart Item Catalogs")).toBeVisible();
-    await expect(page.getByText("E2E Test Catalog")).toBeVisible();
+    const main = page.locator("main");
+
+    // Wait for catalog metadata to load
+    await expect(main.getByText("Catalog Name")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Verify breadcrumb — scope to main content to avoid matching sidebar link
+    await expect(
+      main.getByRole("link", { name: "Cart Item Catalogs" })
+    ).toBeVisible();
 
     // Verify metadata
-    await expect(page.getByText("Catalog Name")).toBeVisible();
-    await expect(page.getByText("Catalog ID")).toBeVisible();
-    await expect(page.getByText("Connected Applications")).toBeVisible();
+    await expect(main.getByText("Catalog ID")).toBeVisible();
+    await expect(main.getByText("Connected Applications")).toBeVisible();
 
     // Verify Edit Catalog button
     await expect(

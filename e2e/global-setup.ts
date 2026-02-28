@@ -180,6 +180,8 @@ export default async function globalSetup() {
   }
 
   // Create test catalogs
+  // Note: An application can only subscribe to one catalog at a time
+  // (idx_app_subs_unique_catalog_app), so only the first catalog gets the app subscription.
   const catalogConfigs = [
     {
       name: "E2E Test Catalog",
@@ -189,7 +191,6 @@ export default async function globalSetup() {
     {
       name: "E2E Editable Catalog",
       description: "Catalog for edit/delete E2E tests",
-      subscribedApplicationsIds: [app.id],
     },
   ];
 
